@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">ChatApp</string>
+    <string name="button_login">Logar</string>
+    <string name="hint_edt_email">Digite seu e-mail:</string>
+    <string name="hint_edt_status">Digite seu Status:</string>
+    <string name="email">Email</string>
+    <string name="hint_edt_password">Digite sua senha:</string>
+    <string name="hint_edt_confirm_password">Confirme sua senha:</string>
+    <string name="hint_edt_name">Digite o seu nome:</string>
+    <string name="button_register">Registrar</string>
+    <string name="action_search">Pesquisar</string>
+    <string name="action_settings">Configurações</string>
+    <string name="action_quit">Sair</string>
+    <string name="ajustes">Ajustes</string>
+    <string name="salvar">Salvar</string>
+    <string name="atualizar">Atualizar</string>
+    <string name="add_image_descrp">Image Descrip</string>
+    <string name="hint_name">Digite o seu nome</string>
 </resources>

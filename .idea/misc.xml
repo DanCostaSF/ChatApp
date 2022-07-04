@@ -3,7 +3,22 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="app/src/main/res/layout/activity_main.xml" value="3.0" />
+        <entry key="app/src/main/res/drawable-v24/ic_back_24.xml" value="0.2085" />
+        <entry key="app/src/main/res/drawable-v24/ic_baseline_email_24.xml" value="0.2085" />
+        <entry key="app/src/main/res/drawable-v24/ic_baseline_import_contacts_24.xml" value="0.2085" />
+        <entry key="app/src/main/res/drawable-v24/ic_search.xml" value="0.2085" />
+        <entry key="app/src/main/res/drawable-v24/view_bg.xml" value="0.2085" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.2795132123991208" />
+        <entry key="app/src/main/res/layout/fragment_auth.xml" value="0.2953125" />
+        <entry key="app/src/main/res/layout/fragment_bottomsheet.xml" value="0.2953125" />
+        <entry key="app/src/main/res/layout/fragment_chat_screen.xml" value="0.2953125" />
+        <entry key="app/src/main/res/layout/fragment_contacts.xml" value="0.2953125" />
+        <entry key="app/src/main/res/layout/fragment_login.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_main_screen.xml" value="0.2953125" />
+        <entry key="app/src/main/res/layout/fragment_register.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.29322509765625004" />
+        <entry key="app/src/main/res/menu/main_menu.xml" value="0.2953125" />
+        <entry key="app/src/main/res/menu/settings_menu.xml" value="0.2953125" />
       </map>
     </option>
   </component>
