@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/back_contacts"
+        android:elevation="10dp"
+        android:padding="10dp"
+        android:id="@+id/userContact">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/img_profile_image"
+            android:layout_width="95dp"
+            android:layout_height="95dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/padrao" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="110dp"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textViewNameRec"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/nome_do_usuario"
+                android:textColor="@color/letra"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textViewEmailRec"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="1dp"
+                android:padding="3dp"
+                android:text="@string/email_do_usuario"
+                android:textColor="@color/letra"
+                android:textSize="16sp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/textViewStatusRec"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:padding="3dp"
+                android:text="@string/status_do_usuario"
+                android:textColor="@color/letra"
+                android:textSize="15sp"
+                android:textStyle="normal" />
+
+
+
+        </LinearLayout>
+
+
+    </androidx.cardview.widget.CardView>
+</layout>

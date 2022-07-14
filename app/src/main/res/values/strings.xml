@@ -16,4 +16,19 @@
     <string name="atualizar">Atualizar</string>
     <string name="add_image_descrp">Image Descrip</string>
     <string name="hint_name">Digite o seu nome</string>
+    <string name="nome_do_individuo">Nome do individuo</string>
+    <string name="mensagem">Mensagem</string>
+    <string name="nome_do_usuario">Nome do usuario</string>
+    <string name="mensagem_do_usuario">Mensagem do Usuario</string>
+    <string name="button_back_content">button back</string>
+    <string name="sendingmessage">sendingmessage</string>
+    <string name="email_do_usuario">Email do usuário</string>
+    <string name="status_do_usuario">Status do usuario</string>
+    <string name="add_friend">Adicionar</string>
+    <string name="contatos">Contatos</string>
+    <string name="receiver_message">receiver message</string>
+    <string name="sender_message">sender message</string>
+    <string name="usuarios">Usuários</string>
+
+
 </resources>

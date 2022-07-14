@@ -6,13 +6,6 @@
     tools:context=".WhatsAppActivity">
 
     <item
-        android:id="@+id/action_search"
-        android:title="@string/action_search"
-        android:icon="@drawable/ic_search"
-        app:showAsAction="ifRoom"
-        app:actionViewClass="androidx.appcompat.widget.SearchView"/>
-
-    <item
         android:id="@+id/action_settings"
         android:title="@string/action_settings"
         app:showAsAction="never"/>

@@ -29,10 +29,39 @@
         <action
             android:id="@+id/action_mainScreenFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_mainScreenFragment_to_messageFragment"
+            app:destination="@id/messageFragment" />
+        <action
+            android:id="@+id/action_mainScreenFragment_to_contactsFragment"
+            app:destination="@id/contactsFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="br.com.android.chatapp.ui.mainscreen.configuration.SettingsFragment"
         android:label="SettingsFragment"
         tools:layout="@layout/fragment_settings"/>
+    <fragment
+        android:id="@+id/messageFragment"
+        android:name="br.com.android.chatapp.ui.mainscreen.message.MessageFragment"
+        android:label="MessageFragment"
+        tools:layout="@layout/fragment_message">
+        <argument android:name="friendUID"
+        app:argType="string" />
+        <argument
+            android:name="friendName"
+            app:argType="string" />
+        <argument
+            android:name="profilePhoto"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/contactsFragment"
+        android:name="br.com.android.chatapp.ui.mainscreen.contacts.ContactsFragment"
+        android:label="ContactsFragment" >
+        <action
+            android:id="@+id/action_contactsFragment_to_messageFragment"
+            app:destination="@id/messageFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
 </navigation>

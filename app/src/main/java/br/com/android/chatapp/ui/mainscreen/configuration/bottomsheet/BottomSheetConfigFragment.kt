@@ -10,23 +10,17 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.ViewModelProvider
 import br.com.android.chatapp.databinding.FragmentBottomsheetBinding
 import br.com.android.chatapp.ui.util.hasPermission
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
-import java.io.ByteArrayOutputStream
 
 class BottomSheetConfigFragment : BottomSheetDialogFragment(){
 
@@ -38,13 +32,12 @@ class BottomSheetConfigFragment : BottomSheetDialogFragment(){
     private var _binding: FragmentBottomsheetBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var image               : ByteArray
-    private lateinit var storageReference    : StorageReference
+    private var _bsheetViewModel : BotSheetConfViewModel? = null
+    private val bsheetViewModel get() = _bsheetViewModel!!
+
+
     private lateinit var dialog              : AlertDialog
-    private lateinit var auth                : FirebaseAuth
-    private lateinit var fstore              : FirebaseFirestore
-    private lateinit var userId              : String
-    private lateinit var db                  : DocumentReference
+
 
     private val requestGallery =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -71,16 +64,13 @@ class BottomSheetConfigFragment : BottomSheetDialogFragment(){
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
          _binding = FragmentBottomsheetBinding.inflate(inflater, container, false)
 
+        _bsheetViewModel = ViewModelProvider(this,
+            BottomSheetConfigViewModelFactory())[BotSheetConfViewModel::class.java]
 
-        auth                = FirebaseAuth.getInstance()
-        fstore              = FirebaseFirestore.getInstance()
-        userId              = auth.currentUser!!.uid
-        storageReference    = FirebaseStorage.getInstance().reference
-            .child("$userId/profilePhoto")
-        db = fstore.collection("users").document(userId)
+        bsheetViewModel.initialization()
 
         binding.camButton.setOnClickListener {
             verifyCameraPermission()
@@ -93,29 +83,14 @@ class BottomSheetConfigFragment : BottomSheetDialogFragment(){
         return binding.root
     }
 
-    private fun uploadImage(it: Bitmap?) {
-        val baos = ByteArrayOutputStream()
-        it?.compress(Bitmap.CompressFormat.JPEG, 50, baos)
-        image = baos.toByteArray()
 
-
-        storageReference.putBytes(image).addOnSuccessListener {
-            storageReference.downloadUrl.addOnSuccessListener {
-                val obj = mutableMapOf<String, String>()
-                obj["userProfilePhoto"] = it.toString()
-                db.update(obj as Map<String, Any>).addOnSuccessListener {
-                    Log.d("onSucess", "Profile Picture Uploaded")
-                }
-            }
-        }
-    }
 
 
 
     private fun resultCameraForResult(it: ActivityResult) {
         if(it.resultCode == Activity.RESULT_OK) {
             val imageBitmap = it.data?.extras?.get("data") as Bitmap
-            uploadImage(imageBitmap)
+            bsheetViewModel.uploadImage(imageBitmap)
         }
     }
 
@@ -199,7 +174,7 @@ class BottomSheetConfigFragment : BottomSheetDialogFragment(){
                 )
                 ImageDecoder.decodeBitmap(source)
             }
-            uploadImage(bitmap)
+            bsheetViewModel.uploadImage(bitmap)
         }
     }
 

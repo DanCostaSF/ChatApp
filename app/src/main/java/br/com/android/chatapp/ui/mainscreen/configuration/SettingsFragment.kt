@@ -2,7 +2,6 @@ package br.com.android.chatapp.ui.mainscreen.configuration
 
 import android.os.Bundle
 import android.text.Editable
-import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -11,6 +10,7 @@ import br.com.android.chatapp.R
 import br.com.android.chatapp.databinding.FragmentSettingsBinding
 import br.com.android.chatapp.ui.mainscreen.configuration.bottomsheet.BottomSheetConfigFragment
 import br.com.android.chatapp.ui.util.navBack
+import br.com.android.chatapp.ui.util.toast
 import com.squareup.picasso.Picasso
 import java.lang.Exception
 
@@ -75,7 +75,7 @@ class SettingsFragment : Fragment() {
                         .error(R.drawable.padrao)
                         .into(binding.profileImage)
                 } catch (e: Exception) {
-                    Log.i("teste conf fragment", "foto não foi")
+                    toast("Erro ao atualizar a foto, tente novamente.")
                 }
             }
         }

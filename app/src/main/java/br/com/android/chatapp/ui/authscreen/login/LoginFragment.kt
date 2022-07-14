@@ -13,6 +13,10 @@ import br.com.android.chatapp.ui.authscreen.AuthFragmentDirections
 import br.com.android.chatapp.ui.util.navTo
 import br.com.android.chatapp.ui.util.toast
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class LoginFragment : Fragment() {
 
@@ -21,6 +25,10 @@ class LoginFragment : Fragment() {
 
     private var _loginViewModel: LoginViewModel? = null
     private val loginViewModel get() = _loginViewModel!!
+
+    private val parentJob = Job()
+
+    private val coroutineScope = CoroutineScope(Dispatchers.Main + parentJob)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,7 +60,10 @@ class LoginFragment : Fragment() {
                         edtEmail.text.toString(),
                         edtPassword.text.toString(),
                     )
-                    loginViewModel.loginUser(user)
+
+                        loginViewModel.loginUser(user)
+
+
                 } else {
                     toast("Preencha a senha!")
                 }

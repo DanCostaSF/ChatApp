@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:padding="10dp"
+            android:backgroundTint="@color/back_contacts"
+            android:id="@+id/content">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/img_profile_image"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginStart="5dp"
+                android:src="@drawable/padrao" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="80dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
+                android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textReceiver"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/nome_do_usuario"
+                android:textColor="@color/letra"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textMessage"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginStart="1dp"
+                android:padding="1dp"
+                android:text="@string/mensagem_do_usuario"
+                android:textColor="@color/letra"
+                android:textSize="12sp"
+                android:textStyle="normal" />
+
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+
+
+
+
+</layout>

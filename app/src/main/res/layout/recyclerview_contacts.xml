@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/back_contacts"
+        android:padding="5dp"
+        >
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/img_profile_image"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/padrao" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="110dp"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textViewNameRec"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/nome_do_usuario"
+                android:textColor="@color/letra"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/messagesend"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textViewEmailRec"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="3dp"
+                android:text="@string/email_do_usuario"
+                android:textColor="@color/letra"
+                android:textSize="16sp"
+                android:textStyle="normal"
+                android:layout_marginEnd="50dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textViewNameRec" />
+
+            <TextView
+                android:id="@+id/textViewStatusRec"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:padding="3dp"
+                android:text="@string/status_do_usuario"
+                android:textColor="@color/letra"
+                android:textSize="15sp"
+                android:textStyle="normal"
+                app:layout_constraintEnd_toStartOf="@+id/messagesend"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textViewEmailRec" />
+
+            <ImageView
+                android:id="@+id/messagesend"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_message_24"
+                android:backgroundTint="@color/back_contacts"
+                app:layout_constraintStart_toEndOf="@id/textViewEmailRec"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginEnd="15dp"
+                android:visibility="gone"
+                android:layout_marginBottom="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:contentDescription="@string/add_image_descrp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_add_friend"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginBottom="5dp"
+                android:background="#8CAEBC"
+                android:text="@string/add_friend"
+                android:textAlignment="center"
+                android:layout_marginEnd="50dp"
+                android:layout_marginStart="50dp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textViewStatusRec" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</layout>
