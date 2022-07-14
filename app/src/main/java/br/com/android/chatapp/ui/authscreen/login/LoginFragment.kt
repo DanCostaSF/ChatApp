@@ -5,18 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import br.com.android.chatapp.data.models.UserLoginModel
 import br.com.android.chatapp.databinding.FragmentLoginBinding
 import br.com.android.chatapp.ui.authscreen.AuthFragmentDirections
 import br.com.android.chatapp.ui.util.navTo
 import br.com.android.chatapp.ui.util.toast
-import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+
 
 class LoginFragment : Fragment() {
 
@@ -25,10 +20,6 @@ class LoginFragment : Fragment() {
 
     private var _loginViewModel: LoginViewModel? = null
     private val loginViewModel get() = _loginViewModel!!
-
-    private val parentJob = Job()
-
-    private val coroutineScope = CoroutineScope(Dispatchers.Main + parentJob)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,18 +62,18 @@ class LoginFragment : Fragment() {
                 binding.edtTextLogin.error = "Preencha o e-mail!"
             }
         }
-        loginViewModel.navigateToMainScreen.observe(viewLifecycleOwner, Observer {
+        loginViewModel.navigateToMainScreen.observe(viewLifecycleOwner) {
             if(it == true) {
                 navTo(AuthFragmentDirections.actionAuthFragmentToMainScreenFragment())
                 loginViewModel.doneNavigatingMS()
             }
-        })
+        }
 
-        loginViewModel.savedExceptLogin.observe(viewLifecycleOwner, Observer {
+        loginViewModel.savedExceptLogin.observe(viewLifecycleOwner) {
             if(!it.isNullOrEmpty()) {
                 toast(it)
                 loginViewModel.doneSaveExceptLogin()
             }
-        })
+        }
     }
 }
