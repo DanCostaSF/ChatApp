@@ -16,16 +16,16 @@ import java.lang.Exception
 
 class SettingsFragment : Fragment() {
 
-    private var _binding : FragmentSettingsBinding? = null
+    private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
 
-    private var _settingsViewModel : SettingsViewModel? = null
+    private var _settingsViewModel: SettingsViewModel? = null
     private val settingsViewModel get() = _settingsViewModel!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
 
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
@@ -112,7 +112,7 @@ class SettingsFragment : Fragment() {
             binding.edtProfileStatus.text.toString()
         )
 
-        binding.textViewName.text =  binding.edtProfileName.text
+        binding.textViewName.text = binding.edtProfileName.text
         binding.textViewStatus.text = binding.edtProfileStatus.text
     }
 

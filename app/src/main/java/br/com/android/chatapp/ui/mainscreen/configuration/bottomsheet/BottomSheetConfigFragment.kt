@@ -22,7 +22,7 @@ import br.com.android.chatapp.ui.util.hasPermission
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class BottomSheetConfigFragment : BottomSheetDialogFragment(){
+class BottomSheetConfigFragment : BottomSheetDialogFragment() {
 
     companion object {
         private const val PERMISSION_GALLERY = Manifest.permission.READ_EXTERNAL_STORAGE
@@ -32,11 +32,11 @@ class BottomSheetConfigFragment : BottomSheetDialogFragment(){
     private var _binding: FragmentBottomsheetBinding? = null
     private val binding get() = _binding!!
 
-    private var _bsheetViewModel : BotSheetConfViewModel? = null
+    private var _bsheetViewModel: BotSheetConfViewModel? = null
     private val bsheetViewModel get() = _bsheetViewModel!!
 
 
-    private lateinit var dialog              : AlertDialog
+    private lateinit var dialog: AlertDialog
 
 
     private val requestGallery =
@@ -63,9 +63,9 @@ class BottomSheetConfigFragment : BottomSheetDialogFragment(){
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
-         _binding = FragmentBottomsheetBinding.inflate(inflater, container, false)
+        _binding = FragmentBottomsheetBinding.inflate(inflater, container, false)
 
         _bsheetViewModel = ViewModelProvider(this,
             BottomSheetConfigViewModelFactory())[BotSheetConfViewModel::class.java]
@@ -82,11 +82,8 @@ class BottomSheetConfigFragment : BottomSheetDialogFragment(){
     }
 
 
-
-
-
     private fun resultCameraForResult(it: ActivityResult) {
-        if(it.resultCode == Activity.RESULT_OK) {
+        if (it.resultCode == Activity.RESULT_OK) {
             val imageBitmap = it.data?.extras?.get("data") as Bitmap
             bsheetViewModel.uploadImage(imageBitmap)
         }
@@ -124,10 +121,10 @@ class BottomSheetConfigFragment : BottomSheetDialogFragment(){
         val builder = AlertDialog.Builder(requireContext())
             .setTitle("Atenção")
             .setMessage("Precisamos do acesso a sua galeria, deseja permitir agora?")
-            .setNegativeButton("Não") {_, _ ->
+            .setNegativeButton("Não") { _, _ ->
                 dialog.dismiss()
             }
-            .setPositiveButton("Sim") {_, _ ->
+            .setPositiveButton("Sim") { _, _ ->
                 val intent = Intent(
                     Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                     Uri.fromParts("package", requireActivity().packageName, null)
@@ -160,7 +157,7 @@ class BottomSheetConfigFragment : BottomSheetDialogFragment(){
 
     private fun resultGalleryForResult(result: ActivityResult) {
         if (result.data?.data != null) {
-            val bitmap : Bitmap = if (Build.VERSION.SDK_INT < 28) {
+            val bitmap: Bitmap = if (Build.VERSION.SDK_INT < 28) {
                 MediaStore.Images.Media.getBitmap(
                     requireActivity().contentResolver,
                     result.data?.data
@@ -177,7 +174,7 @@ class BottomSheetConfigFragment : BottomSheetDialogFragment(){
     }
 
     private fun requestGalleryPermission(it: Boolean) {
-        if( it ) {
+        if (it) {
             resultGallery.launch(
                 Intent(
                     Intent.ACTION_PICK,

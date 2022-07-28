@@ -11,16 +11,12 @@ import java.lang.IllegalArgumentException
 
 class BotSheetConfViewModel(private val repository: FirebaseStorageRepository) : ViewModel() {
 
-
-
     fun uploadImage(it: Bitmap?) {
         viewModelScope.launch {
             repository.uploadImage(it)
         }
     }
-
 }
-
 
 class BottomSheetConfigViewModelFactory : ViewModelProvider.Factory {
 
