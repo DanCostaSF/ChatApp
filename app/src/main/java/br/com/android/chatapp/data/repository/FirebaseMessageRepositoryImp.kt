@@ -13,18 +13,19 @@ object FirebaseMessageRepositoryImp : FirebaseMessageRepository {
     private var receiverRoom: String? = null
     private var senderRoom: String? = null
     private val messageInfo = arrayListOf<MessageModel>()
+    private val fire by lazy { FirebaseFirestore.getInstance() }
+    private val auth by lazy { FirebaseAuth.getInstance() }
 
 
     override suspend fun sendMessagesData(
         message: String,
         friendId: String,
     ) {
-        val senderUid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+        val senderUid = auth.currentUser?.uid.toString()
         receiverRoom = senderUid + friendId
         senderRoom = friendId + senderUid
 
-        FirebaseFirestore.getInstance()
-            .collection("chats")
+        fire.collection("chats")
             .whereArrayContains("room", receiverRoom.toString())
             .addSnapshotListener { value, _ ->
                 if (value!!.isEmpty) {
@@ -39,14 +40,13 @@ object FirebaseMessageRepositoryImp : FirebaseMessageRepository {
                     val timeNow = "$hour:$minute"
                     val messageObject = mutableMapOf<String, Any>().also {
                         it["message"] = message
-                        it["messageSender"] = FirebaseAuth.getInstance().currentUser?.uid.toString()
+                        it["messageSender"] = auth.currentUser?.uid.toString()
                         it["messageReceiver"] = friendId
                         it["messageTime"] = currentTimestamp
                         it["timeNow"] = timeNow
                     }
 
-                    FirebaseFirestore.getInstance()
-                        .collection("chats")
+                    fire.collection("chats")
                         .document(roomId)
                         .collection("messages")
                         .document()
@@ -61,11 +61,10 @@ object FirebaseMessageRepositoryImp : FirebaseMessageRepository {
         result: (UiState<ArrayList<MessageModel>>) -> Unit,
     ) {
 
-        val senderUid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+        val senderUid = auth.currentUser?.uid.toString()
         receiverRoom = senderUid + friendId
 
-        FirebaseFirestore.getInstance()
-            .collection("chats")
+        fire.collection("chats")
             .whereArrayContains("room", receiverRoom.toString())
             .addSnapshotListener { value, _ ->
                 if (value!!.isEmpty) {
@@ -76,8 +75,7 @@ object FirebaseMessageRepositoryImp : FirebaseMessageRepository {
 
                     val roomId = value.documents[0].id
 
-                    FirebaseFirestore.getInstance()
-                        .collection("chats")
+                    fire.collection("chats")
                         .document(roomId)
                         .collection("messages")
                         .orderBy("messageTime", Query.Direction.ASCENDING)
@@ -117,16 +115,17 @@ object FirebaseMessageRepositoryImp : FirebaseMessageRepository {
         friendId: String,
     ) {
         val obj1 = mutableMapOf<String, ArrayList<String>>().also {
-            it["room"] = arrayListOf(senderRoom.toString(), receiverRoom.toString())
-            it["uids"] =
-                arrayListOf(
-                    FirebaseAuth.getInstance().currentUser?.uid.toString(),
-                    friendId
-                )
+            it["room"] = arrayListOf(
+                senderRoom.toString(),
+                receiverRoom.toString()
+            )
+            it["uids"] = arrayListOf(
+                auth.currentUser?.uid.toString(),
+                friendId
+            )
         }
 
-        FirebaseFirestore.getInstance()
-            .collection("chats")
+        fire.collection("chats")
             .document()
             .set(obj1)
 

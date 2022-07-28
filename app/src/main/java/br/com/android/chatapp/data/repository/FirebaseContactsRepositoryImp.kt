@@ -11,14 +11,16 @@ import kotlinx.coroutines.withContext
 
 object FirebaseContactsRepositoryImp : FirebaseContactsRepository {
 
+    private val fire by lazy { FirebaseFirestore.getInstance() }
+    private val auth by lazy { FirebaseAuth.getInstance()}
+
     override suspend fun getUsersData(
         result: (UiState<ArrayList<UserModel>>) -> Unit,
     ) {
         withContext(Dispatchers.Main) {
             val user = arrayListOf<UserModel>()
 
-            FirebaseFirestore.getInstance()
-                .collection("users")
+            fire.collection("users")
                 .orderBy("userName")
                 .addSnapshotListener { snapshot, exception ->
                     if (exception != null) {
@@ -30,8 +32,7 @@ object FirebaseContactsRepositoryImp : FirebaseContactsRepository {
                             val userList = snapshot.documents
                             user.clear()
                             for (doc in userList) {
-                                if (FirebaseAuth.getInstance()
-                                        .currentUser!!.uid != doc.id
+                                if (auth.currentUser!!.uid != doc.id
                                 ) {
                                     val obj = UserModel(
                                         doc.id,
@@ -57,9 +58,8 @@ object FirebaseContactsRepositoryImp : FirebaseContactsRepository {
     ) {
         withContext(Dispatchers.Main) {
             val users = arrayListOf<UserModel>()
-            val userid = FirebaseAuth.getInstance().currentUser!!.uid
-            FirebaseFirestore.getInstance()
-                .collection("users")
+            val userid = auth.currentUser!!.uid
+            fire.collection("users")
                 .document(userid)
                 .collection("friends")
                 .get()
@@ -72,8 +72,7 @@ object FirebaseContactsRepositoryImp : FirebaseContactsRepository {
 
                                 val friendsID = doc.id
 
-                                FirebaseFirestore.getInstance()
-                                    .collection("users")
+                                fire.collection("users")
                                     .document(friendsID)
                                     .addSnapshotListener { value, error ->
                                         if (error != null) {
@@ -113,8 +112,7 @@ object FirebaseContactsRepositoryImp : FirebaseContactsRepository {
                     UiState.Loading
                 )
             } else {
-                FirebaseFirestore.getInstance()
-                    .collection("users")
+                fire.collection("users")
                     .orderBy("userName")
                     .startAt(queryTerm)
                     .limit(5)
@@ -128,7 +126,7 @@ object FirebaseContactsRepositoryImp : FirebaseContactsRepository {
                                 val searchList = snapshot.documents
                                 search.clear()
                                 for (doc in searchList) {
-                                    if (FirebaseAuth.getInstance().currentUser!!.uid != doc.id) {
+                                    if (auth.currentUser!!.uid != doc.id) {
                                         val obj = UserModel(
                                             doc.id,
                                             doc.getString("userName").toString(),
