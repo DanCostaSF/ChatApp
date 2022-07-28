@@ -36,7 +36,7 @@ class SettingsFragment : Fragment() {
         )[SettingsViewModel::class.java]
 
         binding.buttonUpdate.visibility = View.VISIBLE
-        settingsViewModel.initialization()
+        settingsViewModel.setDataUser()
 
         return binding.root
     }

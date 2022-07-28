@@ -70,8 +70,6 @@ class BottomSheetConfigFragment : BottomSheetDialogFragment(){
         _bsheetViewModel = ViewModelProvider(this,
             BottomSheetConfigViewModelFactory())[BotSheetConfViewModel::class.java]
 
-        bsheetViewModel.initialization()
-
         binding.camButton.setOnClickListener {
             verifyCameraPermission()
         }
