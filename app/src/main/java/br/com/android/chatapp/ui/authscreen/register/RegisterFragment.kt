@@ -33,7 +33,6 @@ class RegisterFragment : Fragment() {
         _registerViewModel = ViewModelProvider(
             this, viewModelFactory)[RegisterViewModel::class.java]
 
-        registerViewModel.initialization()
 
         return binding.root
     }

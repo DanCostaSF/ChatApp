@@ -3,14 +3,17 @@ package br.com.android.chatapp.ui.authscreen.login
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import br.com.android.chatapp.data.models.UserLoginModel
+import br.com.android.chatapp.data.repository.FirebaseAuthRepository
+import br.com.android.chatapp.data.util.UiState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import kotlinx.coroutines.launch
 
-class LoginViewModel : ViewModel() {
+class LoginViewModel(private val repository: FirebaseAuthRepository) : ViewModel() {
 
-    private val fire by lazy { FirebaseAuth.getInstance() }
 
     private val _navigateToMainScreen = MutableLiveData<Boolean?>()
     val navigateToMainScreen: LiveData<Boolean?>
@@ -33,24 +36,17 @@ class LoginViewModel : ViewModel() {
     }
 
     fun loginUser(userLogin: UserLoginModel) {
-
-        fire.signInWithEmailAndPassword(
-            userLogin.email,
-            userLogin.password
-        ).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                _navigateToMainScreen.value = true
-                saveExceptLogin("Usuário logado com sucesso!")
-            } else {
-                try {
-                    throw task.exception!!
-                } catch (e: FirebaseAuthInvalidUserException) {
-                    saveExceptLogin("Usuário não está cadastrado.")
-                } catch (e: FirebaseAuthInvalidCredentialsException) {
-                    saveExceptLogin("A senha está incorreta!")
-                } catch (e: Exception) {
-                    saveExceptLogin("Erro ao logar o usuário" + e.message)
-                    e.printStackTrace()
+        viewModelScope.launch {
+            repository.loginUser(userLogin) {
+                when(it) {
+                    is UiState.Success -> {
+                        saveExceptLogin(it.data)
+                        _navigateToMainScreen.value = true
+                    }
+                    is UiState.Failure -> {
+                        saveExceptLogin(it.error.toString())
+                    }
+                    UiState.Loading -> UiState.Loading
                 }
             }
         }

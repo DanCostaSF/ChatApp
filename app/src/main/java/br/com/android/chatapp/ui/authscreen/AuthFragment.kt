@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import br.com.android.chatapp.databinding.FragmentAuthBinding
 import br.com.android.chatapp.ui.authscreen.login.LoginFragment
@@ -27,7 +26,7 @@ class AuthFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentAuthBinding.inflate(inflater, container, false)
 
         _authViewModel = ViewModelProvider(
@@ -39,7 +38,7 @@ class AuthFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        authViewModel.navigateToMainScreen.observe(viewLifecycleOwner, Observer {
+        authViewModel.navigateToMainScreen.observe(viewLifecycleOwner) {
             if ( it == true ) {
                 navTo(
                     AuthFragmentDirections.
@@ -47,7 +46,7 @@ class AuthFragment : Fragment() {
                 )
                 authViewModel.doneNavigation()
             }
-        })
+        }
     }
 
     private fun configTabLayout() {

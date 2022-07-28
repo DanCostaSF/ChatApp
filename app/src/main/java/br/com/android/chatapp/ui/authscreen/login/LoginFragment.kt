@@ -25,7 +25,7 @@ class LoginFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
 
         val viewModelFactory = LoginViewModelFactory()
@@ -53,7 +53,6 @@ class LoginFragment : Fragment() {
                     )
 
                         loginViewModel.loginUser(user)
-
 
                 } else {
                     toast("Preencha a senha!")
