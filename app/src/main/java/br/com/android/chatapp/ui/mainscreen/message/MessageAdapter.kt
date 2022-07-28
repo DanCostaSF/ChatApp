@@ -14,6 +14,7 @@ class MessageAdapter : RecyclerView.Adapter<MessageAdapter.MessageViewHolder>() 
     private val data = mutableListOf<MessageModel>()
 
     fun setData(list: List<MessageModel>) {
+
         this.data.clear()
         this.data.addAll(list)
         notifyDataSetChanged()

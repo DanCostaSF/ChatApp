@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import br.com.android.chatapp.data.util.UiState
 import br.com.android.chatapp.databinding.FragmentChatBinding
 import kotlinx.coroutines.*
 
@@ -28,15 +29,15 @@ class ChatFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentChatBinding.inflate(inflater, container, false)
         val viewModelFactory = ChatViewModelFactory()
 
         _chatScreenViewModel = ViewModelProvider(
             this, viewModelFactory
         )[ChatViewModel::class.java]
-
-
+        initialization()
+        chatScreenViewModel.findChat()
 
         return binding.root
     }
@@ -44,16 +45,14 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initialization()
-
-        chatScreenViewModel.startFragment()
-
-            chatScreenViewModel.findChat()
-
 
         chatScreenViewModel.chatsList.observe(viewLifecycleOwner) { chats ->
-            chats?.let {
-                chatAdapter.setData(it)
+            when(chats) {
+                is UiState.Success -> {
+                    chatAdapter.setData(chats.data.toMutableList())
+                }
+                is UiState.Failure -> UiState.Loading
+                UiState.Loading -> UiState.Loading
             }
         }
     }

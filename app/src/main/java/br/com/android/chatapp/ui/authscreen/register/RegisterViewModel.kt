@@ -13,6 +13,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import java.lang.Exception
 
 class RegisterViewModel : ViewModel() {
+
     private lateinit var fauth: FirebaseAuth
     private lateinit var fstore: FirebaseFirestore
     private lateinit var db: DocumentReference
@@ -52,11 +53,19 @@ class RegisterViewModel : ViewModel() {
         fstore = FirebaseFirestore.getInstance()
     }
 
-    fun createAccount(email: String, password: String) {
-        fauth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
+    fun createAccount(
+        email: String,
+        password: String
+    ) {
+
+        fauth.createUserWithEmailAndPassword(
+            email, password
+        ).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val userInfo = fauth.currentUser?.uid
-                db = fstore.collection("users").document(userInfo.toString())
+                db = fstore
+                    .collection("users")
+                    .document(userInfo.toString())
                 val obj = mutableMapOf<String, String>()
                 obj["userEmail"] = email
                 obj["userPassword"] = password

@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import br.com.android.chatapp.databinding.FragmentRegisterBinding
 import br.com.android.chatapp.ui.authscreen.AuthFragmentDirections
@@ -45,21 +44,21 @@ class RegisterFragment : Fragment() {
             registerClick()
         }
 
-        registerViewModel.progressBar.observe(viewLifecycleOwner, Observer {
+        registerViewModel.progressBar.observe(viewLifecycleOwner) {
             if(it == true) {
                 binding.signUpprogressBar.visibility = View.GONE
                 registerViewModel.doneProgressBar()
             }
-        })
+        }
 
-        registerViewModel.savedExcepRegister.observe(viewLifecycleOwner, Observer {
+        registerViewModel.savedExcepRegister.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty()) {
                 toast(it)
                 registerViewModel.doneSaveExceptRegister()
             }
-        })
+        }
 
-        registerViewModel.navigateToMainScreen.observe(viewLifecycleOwner, Observer {
+        registerViewModel.navigateToMainScreen.observe(viewLifecycleOwner){
             if ( it == true ) {
                 navTo(
                     AuthFragmentDirections.
@@ -67,7 +66,7 @@ class RegisterFragment : Fragment() {
                 )
                 registerViewModel.doneNavigation()
             }
-        })
+        }
 
     }
 

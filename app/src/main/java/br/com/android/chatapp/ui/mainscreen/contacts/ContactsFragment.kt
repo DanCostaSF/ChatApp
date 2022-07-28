@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.android.chatapp.R
 import br.com.android.chatapp.data.models.UserModel
+import br.com.android.chatapp.data.util.UiState
 import br.com.android.chatapp.databinding.FragmentContactsBinding
 import br.com.android.chatapp.ui.util.navBack
 
@@ -33,7 +34,7 @@ class ContactsFragment : Fragment(), androidx.appcompat.widget.SearchView.OnQuer
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentContactsBinding.inflate(inflater, container, false)
         val viewModelFactory = ContactsViewModelFactory()
 
@@ -41,21 +42,26 @@ class ContactsFragment : Fragment(), androidx.appcompat.widget.SearchView.OnQuer
             this, viewModelFactory
         )[ContactsViewModel::class.java]
 
-        contactViewModel.initialization()
         initialization()
-
-
         contactViewModel.getUsers()
 
         contactViewModel.users.observe(viewLifecycleOwner) { users ->
-            users?.let {
-                contactsAdapter.setData(it)
+            when(users) {
+                is UiState.Success -> {
+                    contactsAdapter.setData(users.data.toMutableList())
+                }
+                is UiState.Failure -> UiState.Loading
+                UiState.Loading -> UiState.Loading
             }
         }
 
         contactViewModel.searchInfo.observe(viewLifecycleOwner) { search ->
-            search?.let {
-                searchAdapter.setData(it)
+            when(search) {
+                is UiState.Success -> {
+                    contactsAdapter.setData(search.data.toMutableList())
+                }
+                is UiState.Failure -> UiState.Loading
+                UiState.Loading -> UiState.Loading
             }
         }
 

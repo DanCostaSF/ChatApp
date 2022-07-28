@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import br.com.android.chatapp.data.util.UiState
 import br.com.android.chatapp.databinding.FragmentFriendsBinding
 
 class FriendsFragment : Fragment() {
@@ -33,12 +34,15 @@ class FriendsFragment : Fragment() {
             this, viewModelFactory
         )[FriendsViewModel::class.java]
         initialization()
-        friendsViewModel.initialization()
         friendsViewModel.getFriends()
 
-        friendsViewModel.usersList.observe(viewLifecycleOwner) { users ->
-            users?.let {
-                friendsAdapter.setData(it)
+        friendsViewModel.friends.observe(viewLifecycleOwner) { friends ->
+            when(friends) {
+                is UiState.Success -> {
+                    friendsAdapter.setData(friends.data.toMutableList())
+                }
+                is UiState.Failure -> UiState.Loading
+                UiState.Loading -> UiState.Loading
             }
         }
 

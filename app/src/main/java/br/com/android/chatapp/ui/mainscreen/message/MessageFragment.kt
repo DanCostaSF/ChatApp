@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import br.com.android.chatapp.R
+import br.com.android.chatapp.data.util.UiState
 import br.com.android.chatapp.databinding.FragmentMessageBinding
 import br.com.android.chatapp.ui.util.navBack
 import com.squareup.picasso.Picasso
@@ -39,7 +40,7 @@ class MessageFragment : Fragment() {
         )[MessageViewModel::class.java]
 
         initialization()
-        messageViewModel.initialization(args.friendUID)
+        messageViewModel.fetchMessage(args.friendUID)
 
         messageViewModel.errorEdtSend.observe(viewLifecycleOwner) {
             if (it == true) {
@@ -49,10 +50,16 @@ class MessageFragment : Fragment() {
         }
 
         messageViewModel.messagesList.observe(viewLifecycleOwner) { messages ->
-            messages?.let {
-                messageAdapter.setData(it)
-                binding.recycler.scrollToPosition(it.size - 1)
-            }
+
+                when(messages) {
+                    is UiState.Success -> {
+                        messageAdapter.setData(messages.data.toMutableList())
+                        binding.recycler.scrollToPosition(messages.data.size - 1)
+                    }
+                    is UiState.Failure -> UiState.Loading
+                    UiState.Loading -> UiState.Loading
+                }
+
         }
 
         return binding.root
