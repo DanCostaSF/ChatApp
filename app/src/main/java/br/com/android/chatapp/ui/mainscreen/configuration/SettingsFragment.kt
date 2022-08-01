@@ -63,6 +63,11 @@ class SettingsFragment : Fragment() {
             navBack()
         }
 
+        setObservers()
+
+    }
+
+    private fun setObservers() {
         settingsViewModel.userConf.observe(viewLifecycleOwner) { user ->
             user?.let {
                 binding.textViewName.text = it[0].profileName
@@ -79,7 +84,6 @@ class SettingsFragment : Fragment() {
                 }
             }
         }
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

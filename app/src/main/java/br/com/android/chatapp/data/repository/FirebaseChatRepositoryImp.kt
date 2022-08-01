@@ -7,65 +7,90 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 object FirebaseChatRepositoryImp : FirebaseChatRepository {
 
-    private val chatsInfo = arrayListOf<ChatModel>()
 
     private val fire by lazy { FirebaseFirestore.getInstance() }
-    private val auth by lazy { FirebaseAuth.getInstance()}
+    private val auth by lazy { FirebaseAuth.getInstance() }
+
+    private var chatsInfo = arrayListOf<ChatModel>()
 
     override suspend fun findFriends(
         result: (UiState<ArrayList<ChatModel>>) -> Unit,
     ) {
-        withContext(Dispatchers.Main) {
+        withContext(Dispatchers.IO) {
             fire.collection("users")
-                .document(FirebaseAuth.getInstance().uid.toString())
+                .document(auth.uid.toString())
                 .collection("friends")
                 .get()
                 .addOnSuccessListener {
+                    chatsInfo.clear()
                     if (!it.isEmpty) {
                         val listContact = it.documents
-                        chatsInfo.clear()
                         for (doc in listContact) {
                             if (doc.id != auth.currentUser?.uid) {
-
                                 val friendsID = doc.id
-                                findChat(friendsID)
+                                findChat(friendsID) { room ->
+                                    getLastMessage(room) { lastmessage ->
+                                        fire.collection("users")
+                                            .document(friendsID)
+                                            .addSnapshotListener { value, error ->
+                                                if (error != null) {
+                                                    result.invoke(
+                                                        UiState.Loading
+                                                    )
+                                                } else {
+                                                    val name =
+                                                        value!!.getString("userName")
+                                                            .toString()
+                                                    val photo =
+                                                        value.getString("userProfilePhoto")
+                                                            .toString()
 
+                                                    val obj =
+                                                        ChatModel(
+                                                            name,
+                                                            lastmessage,
+                                                            photo,
+                                                            friendsID,
+                                                            null
+                                                        )
+                                                    chatsInfo.add(obj)
+                                                    result.invoke(
+                                                        UiState.Success(chatsInfo)
+                                                    )
+                                                }
+                                            }
+                                    }
+                                }
                             }
                         }
                     }
-
                 }
-            delay(2000)
-            result.invoke(
-                UiState.Success(chatsInfo)
-            )
         }
     }
 
+
     private fun findChat(
         friend: String,
+        result: (String) -> Unit,
     ) {
         val room = auth.uid.toString() + friend
-
         fire.collection("chats")
             .whereArrayContains("room", room)
             .addSnapshotListener { value, _ ->
                 if (!value!!.isEmpty) {
                     val roomID = value.documents[0].id
-                    getLastMessage(roomID, friend)
-
+                    result.invoke(roomID)
                 }
             }
     }
 
     private fun getLastMessage(
         room: String,
-        friend: String,
+        message: (String) -> Unit,
     ) {
 
         fire.collection("chats")
@@ -85,43 +110,11 @@ object FirebaseChatRepositoryImp : FirebaseChatRepository {
                             .document(id)
                             .get()
                             .addOnSuccessListener {
-                                val message = it.getString("message").toString()
-                                setChatData(friend, message)
-
-
+                                val lastmessage = it.getString("message").toString()
+                                message.invoke(lastmessage)
                             }
-
                     }
                 }
             }
     }
-
-    private fun setChatData(
-        friend: String,
-        lastMessage: String,
-    ) {
-
-        fire.collection("users")
-            .document(friend)
-            .addSnapshotListener { value, error ->
-                if (error != null) {
-                    Log.d("teste", "error findfriend")
-                } else {
-
-                    val name = value!!.getString("userName").toString()
-                    val photo = value.getString("userProfilePhoto").toString()
-
-                    val obj =
-                        ChatModel(
-                            name,
-                            lastMessage,
-                            photo,
-                            friend
-                        )
-                    chatsInfo.add(obj)
-                }
-
-            }
-    }
-
 }

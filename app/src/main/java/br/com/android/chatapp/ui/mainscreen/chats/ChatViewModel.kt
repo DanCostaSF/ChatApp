@@ -12,7 +12,6 @@ import kotlinx.coroutines.launch
 
 class ChatViewModel(private val repository: FirebaseChatRepository) : ViewModel() {
 
-
     private val _chatsList= MutableLiveData<UiState<List<ChatModel>>>()
     val chatsList: LiveData<UiState<List<ChatModel>>>
         get() = _chatsList
@@ -24,5 +23,4 @@ class ChatViewModel(private val repository: FirebaseChatRepository) : ViewModel(
             }
         }
     }
-
 }

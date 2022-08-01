@@ -41,27 +41,6 @@ class MessageFragment : Fragment() {
 
         initialization()
         messageViewModel.fetchMessage(args.friendUID)
-
-        messageViewModel.errorEdtSend.observe(viewLifecycleOwner) {
-            if (it == true) {
-                binding.edtSend.error = "Digite algo para enviar!"
-                messageViewModel.doneErrorEdtSend()
-            }
-        }
-
-        messageViewModel.messagesList.observe(viewLifecycleOwner) { messages ->
-
-                when(messages) {
-                    is UiState.Success -> {
-                        messageAdapter.setData(messages.data.toMutableList())
-                        binding.recycler.scrollToPosition(messages.data.size - 1)
-                    }
-                    is UiState.Failure -> UiState.Loading
-                    UiState.Loading -> UiState.Loading
-                }
-
-        }
-
         return binding.root
 
     }
@@ -71,6 +50,8 @@ class MessageFragment : Fragment() {
         binding.btnBack.setOnClickListener {
             navBack()
         }
+
+        setObserver()
 
         binding.fab.setOnClickListener {
             val message = binding.edtSend.text.toString()
@@ -84,9 +65,34 @@ class MessageFragment : Fragment() {
 
     private fun initialization() {
         binding.namePerson.text = args.friendName
-        Picasso.get().load(args.profilePhoto).error(R.drawable.padrao).into(binding.profileImage)
+        Picasso.get()
+            .load(args.profilePhoto)
+            .error(R.drawable.padrao)
+            .into(binding.profileImage)
         messageAdapter = MessageAdapter()
         binding.recycler.layoutManager = LinearLayoutManager(requireContext())
         binding.recycler.adapter = messageAdapter
+    }
+
+    private fun setObserver() {
+        messageViewModel.errorEdtSend.observe(viewLifecycleOwner) {
+            if (it == true) {
+                binding.edtSend.error = "Digite algo para enviar!"
+                messageViewModel.doneErrorEdtSend()
+            }
+        }
+
+        messageViewModel.messagesList.observe(viewLifecycleOwner) { messages ->
+
+            when(messages) {
+                is UiState.Success -> {
+                    messageAdapter.setData(messages.data.toMutableList())
+                    binding.recycler.scrollToPosition(messages.data.size - 1)
+                }
+                is UiState.Failure -> UiState.Loading
+                UiState.Loading -> UiState.Loading
+            }
+
+        }
     }
 }

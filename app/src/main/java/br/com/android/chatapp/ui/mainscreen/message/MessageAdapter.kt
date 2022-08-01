@@ -7,9 +7,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import br.com.android.chatapp.R
 import br.com.android.chatapp.data.models.MessageModel
+import br.com.android.chatapp.ui.OnClickItemListener
 import com.google.firebase.auth.FirebaseAuth
 
-class MessageAdapter : RecyclerView.Adapter<MessageAdapter.MessageViewHolder>() {
+class MessageAdapter :
+    RecyclerView.Adapter<MessageAdapter.MessageViewHolder>() {
 
     private val data = mutableListOf<MessageModel>()
 

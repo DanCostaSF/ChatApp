@@ -5,15 +5,21 @@ import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.android.chatapp.R
 import br.com.android.chatapp.data.models.UserModel
 import br.com.android.chatapp.data.util.UiState
 import br.com.android.chatapp.databinding.FragmentContactsBinding
+import br.com.android.chatapp.ui.OnClickItemListener
 import br.com.android.chatapp.ui.util.navBack
 
-class ContactsFragment : Fragment(), androidx.appcompat.widget.SearchView.OnQueryTextListener {
+
+class ContactsFragment
+    : Fragment(),
+    androidx.appcompat.widget.SearchView.OnQueryTextListener,
+    OnClickItemListener{
 
     private var _binding: FragmentContactsBinding? = null
     private val binding get() = _binding!!
@@ -45,26 +51,6 @@ class ContactsFragment : Fragment(), androidx.appcompat.widget.SearchView.OnQuer
         initialization()
         contactViewModel.getUsers()
 
-        contactViewModel.users.observe(viewLifecycleOwner) { users ->
-            when(users) {
-                is UiState.Success -> {
-                    contactsAdapter.setData(users.data.toMutableList())
-                }
-                is UiState.Failure -> UiState.Loading
-                UiState.Loading -> UiState.Loading
-            }
-        }
-
-        contactViewModel.searchInfo.observe(viewLifecycleOwner) { search ->
-            when(search) {
-                is UiState.Success -> {
-                    contactsAdapter.setData(search.data.toMutableList())
-                }
-                is UiState.Failure -> UiState.Loading
-                UiState.Loading -> UiState.Loading
-            }
-        }
-
         return binding.root
     }
 
@@ -75,7 +61,7 @@ class ContactsFragment : Fragment(), androidx.appcompat.widget.SearchView.OnQuer
         searchAdapter = SearchAdapter()
         searchRecyclerView.adapter = searchAdapter
         binding.recycler.layoutManager = LinearLayoutManager(requireContext())
-        contactsAdapter = ContactsAdapter()
+        contactsAdapter = ContactsAdapter(this)
         binding.recycler.adapter = contactsAdapter
 
 
@@ -89,10 +75,36 @@ class ContactsFragment : Fragment(), androidx.appcompat.widget.SearchView.OnQuer
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
+
+        setObservers()
+
         binding.btnBack.setOnClickListener {
             navBack()
         }
+    }
 
+
+
+    private fun setObservers() {
+        contactViewModel.users.observe(viewLifecycleOwner) { chat ->
+            when(chat) {
+                is UiState.Success -> {
+                    contactsAdapter.setData(chat.data.toMutableList())
+                }
+                is UiState.Failure -> UiState.Loading
+                UiState.Loading -> UiState.Loading
+            }
+        }
+
+        contactViewModel.searchInfo.observe(viewLifecycleOwner) { search ->
+            when(search) {
+                is UiState.Success -> {
+                    searchAdapter.setData(search.data.toMutableList())
+                }
+                is UiState.Failure -> UiState.Loading
+                UiState.Loading -> UiState.Loading
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -132,5 +144,23 @@ class ContactsFragment : Fragment(), androidx.appcompat.widget.SearchView.OnQuer
         return true
     }
 
+    override fun <T, I> onItemClick(item: T, intent: I?) {
+        val intentContact = intent as IntentContact
+        when(intentContact) {
 
+            is IntentContact.goToMessage -> {
+                val sendData = ContactsFragmentDirections.actionContactsFragmentToMessageFragment(
+                    intentContact.profileUid,
+                    intentContact.profileName,
+                    intentContact.profilePhoto
+                )
+                requireView().findNavController().navigate(sendData)
+            }
+            is IntentContact.goToAddFriend -> {
+                contactViewModel.addFriend(intentContact.profileUid)
+
+            }
+        }
+
+    }
 }

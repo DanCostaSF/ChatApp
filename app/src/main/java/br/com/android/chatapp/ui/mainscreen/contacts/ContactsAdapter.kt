@@ -1,28 +1,23 @@
 package br.com.android.chatapp.ui.mainscreen.contacts
 
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import br.com.android.chatapp.R
-import br.com.android.chatapp.data.models.UserModel
+import br.com.android.chatapp.data.models.ContactModel
 import br.com.android.chatapp.databinding.RecyclerviewContactsBinding
-import br.com.android.chatapp.ui.mainscreen.MainScreenFragmentDirections
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldPath
-import com.google.firebase.firestore.FirebaseFirestore
+import br.com.android.chatapp.ui.OnClickItemListener
 
 import com.squareup.picasso.Picasso
-import java.util.*
 
-class ContactsAdapter : RecyclerView.Adapter<ContactsAdapter.ContactsViewHolder>() {
+class ContactsAdapter(var listener: OnClickItemListener) :
+    RecyclerView.Adapter<ContactsAdapter.ContactsViewHolder>() {
 
-    private val data = mutableListOf<UserModel>()
+    private val data = mutableListOf<ContactModel>()
 
-    fun setData(list: List<UserModel>) {
+    fun setData(list: List<ContactModel>) {
         this.data.clear()
         this.data.addAll(list)
         notifyDataSetChanged()
@@ -34,11 +29,51 @@ class ContactsAdapter : RecyclerView.Adapter<ContactsAdapter.ContactsViewHolder>
         val name = binding.textViewNameRec
         val email = binding.textViewEmailRec
         val status = binding.textViewStatusRec
-        val photo = binding.imgProfileImage
-        val buttonFriend = binding.buttonAddFriend
-        val openChat = binding.messagesend
+        private val photo = binding.imgProfileImage
+        private val buttonFriend = binding.buttonAddFriend
+        private val openChat = binding.messagesend
+
+        fun bind(item: ContactModel, listener: OnClickItemListener) {
+            name.text = item.profileName
+            email.text = item.profileEmail
+            status.text = item.profileStatus
+            Picasso.get()
+                .load(item.profilePhoto)
+                .error(R.drawable.padrao)
+                .into(photo)
+
+            if (item.isFriend) {
+                buttonFriend.visibility = View.GONE
+                openChat.visibility = View.VISIBLE
+            } else {
+                openChat.visibility = View.GONE
+                buttonFriend.visibility = View.VISIBLE
+            }
+
+            buttonFriend.setOnClickListener {
+                listener.onItemClick(
+                    item, IntentContact.goToAddFriend(
+                        item.profileUid
+                    )
+                )
+            }
+
+
+            openChat.setOnClickListener {
+                listener.onItemClick(
+                    item, IntentContact.goToMessage(
+                        item.profileUid,
+                        item.profileName,
+                        item.profilePhoto
+                    )
+                )
+            }
+
+
+        }
 
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactsViewHolder {
         return ContactsViewHolder(
             RecyclerviewContactsBinding.inflate(
@@ -50,58 +85,8 @@ class ContactsAdapter : RecyclerView.Adapter<ContactsAdapter.ContactsViewHolder>
     }
 
     override fun onBindViewHolder(holder: ContactsViewHolder, position: Int) {
-        val list = data[position]
-        holder.name.text = list.profileName
-        holder.email.text = list.profileEmail
-        holder.status.text = list.profileStatus
-        Picasso.get().load(list.profilePhoto).error(R.drawable.padrao).into(holder.photo)
-
-        FirebaseFirestore.getInstance()
-            .collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
-            .collection("friends")
-            .whereEqualTo(FieldPath.documentId(), list.profileUid)
-            .addSnapshotListener { snapshot, exception ->
-                if (exception != null) {
-                    Log.e("onError", "ErrorSearchContact")
-                } else {
-                    if (!snapshot?.isEmpty!!) {
-                        holder.buttonFriend.visibility = View.GONE
-                        holder.openChat.visibility = View.VISIBLE
-                    } else {
-                        holder.buttonFriend.visibility = View.VISIBLE
-                        holder.openChat.visibility = View.GONE
-                    }
-                }
-            }
-
-        holder.openChat.setOnClickListener {
-            val sendData = ContactsFragmentDirections.actionContactsFragmentToMessageFragment(
-                list.profileUid,
-                list.profileName,
-                list.profilePhoto
-            )
-
-            Navigation.findNavController(holder.itemView).navigate(sendData)
-        }
-
-        holder.buttonFriend.setOnClickListener {
-
-            val c = Calendar.getInstance(Locale.getDefault())
-            val hour = c.get(Calendar.HOUR_OF_DAY)
-            val minute = c.get(Calendar.MINUTE)
-            val timeNow = "$hour:$minute"
-
-            val uid1 = FirebaseAuth.getInstance().currentUser?.uid.toString()
-            val uid2 = list.profileUid
-
-            val obj = mutableMapOf<String, String>().also {
-                it["time"] = timeNow
-            }
-
-            FirebaseFirestore.getInstance().collection("users").document(uid1)
-                .collection("friends").document(uid2).set(obj)
-        }
-
+        val item = data[position]
+        holder.bind(item, listener)
 
     }
 

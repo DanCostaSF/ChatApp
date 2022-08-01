@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import br.com.android.chatapp.data.models.ContactModel
 import br.com.android.chatapp.data.models.UserModel
 import br.com.android.chatapp.data.repository.FirebaseContactsRepository
 import br.com.android.chatapp.data.util.UiState
@@ -15,8 +16,8 @@ class ContactsViewModel(private val repository: FirebaseContactsRepository) : Vi
     val searchInfo: LiveData<UiState<List<UserModel>>>
         get() = _searchInfo
 
-    private val _users = MutableLiveData<UiState<List<UserModel>>>()
-    val users: LiveData<UiState<List<UserModel>>>
+    private val _users = MutableLiveData<UiState<List<ContactModel>>>()
+    val users: LiveData<UiState<List<ContactModel>>>
         get() = _users
 
     fun getUsers() {
@@ -24,6 +25,12 @@ class ContactsViewModel(private val repository: FirebaseContactsRepository) : Vi
             repository.getUsersData {
                 _users.postValue(it)
             }
+        }
+    }
+
+    fun addFriend(friendID: String) {
+        viewModelScope.launch {
+            repository.addFriend(friendID)
         }
     }
 

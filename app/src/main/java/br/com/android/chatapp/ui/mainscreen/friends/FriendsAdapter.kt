@@ -2,15 +2,15 @@ package br.com.android.chatapp.ui.mainscreen.friends
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import br.com.android.chatapp.R
 import br.com.android.chatapp.data.models.UserModel
 import br.com.android.chatapp.databinding.RecyclerviewFriendsBinding
-import br.com.android.chatapp.ui.mainscreen.MainScreenFragmentDirections
+import br.com.android.chatapp.ui.OnClickItemListener
 import com.squareup.picasso.Picasso
 
-class FriendsAdapter : RecyclerView.Adapter<FriendsAdapter.FriendsViewHolder>() {
+class FriendsAdapter(var listener: OnClickItemListener) :
+    RecyclerView.Adapter<FriendsAdapter.FriendsViewHolder>() {
 
     private val data = mutableListOf<UserModel>()
 
@@ -29,6 +29,25 @@ class FriendsAdapter : RecyclerView.Adapter<FriendsAdapter.FriendsViewHolder>() 
         val status = binding.textViewStatusRec
         val photo = binding.imgProfileImage
         val userContact = binding.userContact
+
+        fun bind(item: UserModel, listener: OnClickItemListener) {
+            name.text = item.profileName
+            email.text = item.profileEmail
+            status.text = item.profileStatus
+            Picasso
+                .get()
+                .load(item.profilePhoto)
+                .error(R.drawable.padrao)
+                .into(photo)
+
+            userContact.setOnClickListener {
+                listener.onItemClick(
+                    item, null
+                )
+            }
+
+        }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendsViewHolder {
@@ -42,22 +61,8 @@ class FriendsAdapter : RecyclerView.Adapter<FriendsAdapter.FriendsViewHolder>() 
     }
 
     override fun onBindViewHolder(holder: FriendsViewHolder, position: Int) {
-        val list = data[position]
-        holder.name.text = list.profileName
-        holder.email.text = list.profileEmail
-        holder.status.text = list.profileStatus
-        Picasso.get().load(list.profilePhoto).error(R.drawable.padrao).into(holder.photo)
-
-
-        holder.userContact.setOnClickListener {
-            val sendData = MainScreenFragmentDirections.actionMainScreenFragmentToMessageFragment(
-                list.profileUid,
-                list.profileName,
-                list.profilePhoto
-            )
-            Navigation.findNavController(holder.itemView).navigate(sendData)
-
-        }
+        val friends = data[position]
+        holder.bind(friends, listener)
     }
 
     override fun getItemCount(): Int {

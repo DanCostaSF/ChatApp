@@ -1,12 +1,17 @@
 package br.com.android.chatapp.data.repository
 
 import android.util.Log
+import android.view.View
+import br.com.android.chatapp.data.models.ContactModel
 import br.com.android.chatapp.data.models.UserModel
 import br.com.android.chatapp.data.util.UiState
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 object FirebaseContactsRepositoryImp : FirebaseContactsRepository {
@@ -15,11 +20,10 @@ object FirebaseContactsRepositoryImp : FirebaseContactsRepository {
     private val auth by lazy { FirebaseAuth.getInstance()}
 
     override suspend fun getUsersData(
-        result: (UiState<ArrayList<UserModel>>) -> Unit,
+        result: (UiState<ArrayList<ContactModel>>) -> Unit,
     ) {
         withContext(Dispatchers.Main) {
-            val user = arrayListOf<UserModel>()
-
+            val user = arrayListOf<ContactModel>()
             fire.collection("users")
                 .orderBy("userName")
                 .addSnapshotListener { snapshot, exception ->
@@ -34,23 +38,44 @@ object FirebaseContactsRepositoryImp : FirebaseContactsRepository {
                             for (doc in userList) {
                                 if (auth.currentUser!!.uid != doc.id
                                 ) {
-                                    val obj = UserModel(
-                                        doc.id,
-                                        doc.getString("userName").toString(),
-                                        doc.getString("userEmail").toString(),
-                                        doc.getString("userStatus").toString(),
-                                        doc.getString("userProfilePhoto").toString()
-                                    )
-                                    user.add(obj)
-                                    result.invoke(
-                                        UiState.Success(user)
-                                    )
+                                    isFriend(doc.id) {
+                                        val obj = ContactModel(
+                                            doc.id,
+                                            doc.getString("userName").toString(),
+                                            doc.getString("userEmail").toString(),
+                                            doc.getString("userStatus").toString(),
+                                            doc.getString("userProfilePhoto").toString(),
+                                            it
+                                        )
+                                        user.add(obj)
+                                        result.invoke(
+                                            UiState.Success(user)
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
                 }
         }
+    }
+
+    private fun isFriend(friendID: String, result: ( Boolean) -> Unit) {
+        FirebaseFirestore.getInstance()
+            .collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
+            .collection("friends")
+            .whereEqualTo(FieldPath.documentId(), friendID)
+            .addSnapshotListener { snapshot, exception ->
+                if (exception != null) {
+                    Log.e("onError", "ErrorSearchContact")
+                } else {
+                    if (!snapshot?.isEmpty!!) {
+                        result.invoke(true)
+                    } else {
+                        result.invoke(false)
+                    }
+                }
+            }
     }
 
     override suspend fun getFriendsData(
@@ -98,6 +123,28 @@ object FirebaseContactsRepositoryImp : FirebaseContactsRepository {
                         }
                     }
                 }
+        }
+    }
+
+    override suspend fun addFriend(friend: String) {
+        withContext(Dispatchers.IO) {
+            val c = Calendar.getInstance(Locale.getDefault())
+            val hour = c.get(Calendar.HOUR_OF_DAY)
+            val minute = c.get(Calendar.MINUTE)
+            val timeNow = "$hour:$minute"
+
+            val uid1 = auth.currentUser?.uid.toString()
+
+
+            val obj = mutableMapOf<String, String>().also {
+                it["time"] = timeNow
+            }
+
+            fire.collection("users")
+                .document(uid1)
+                .collection("friends")
+                .document(friend)
+                .set(obj)
         }
     }
 

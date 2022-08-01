@@ -7,12 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import br.com.android.chatapp.data.models.ChatModel
 import br.com.android.chatapp.data.util.UiState
 import br.com.android.chatapp.databinding.FragmentChatBinding
-import kotlinx.coroutines.*
+import br.com.android.chatapp.ui.OnClickItemListener
+import br.com.android.chatapp.ui.mainscreen.MainScreenFragmentDirections
 
-class ChatFragment : Fragment() {
+class ChatFragment : Fragment(), OnClickItemListener {
 
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
@@ -20,15 +24,13 @@ class ChatFragment : Fragment() {
     private var _chatScreenViewModel: ChatViewModel? = null
     private val chatScreenViewModel get() = _chatScreenViewModel!!
 
-
-
     private lateinit var chatAdapter: ChatAdapter
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentChatBinding.inflate(inflater, container, false)
         val viewModelFactory = ChatViewModelFactory()
@@ -44,10 +46,19 @@ class ChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setObservers()
+    }
 
+    private fun initialization() {
+        binding.recycler.setHasFixedSize(true)
+        chatAdapter = ChatAdapter(this)
+        binding.recycler.layoutManager = LinearLayoutManager(requireContext())
+        binding.recycler.adapter = chatAdapter
+    }
 
+    private fun setObservers() {
         chatScreenViewModel.chatsList.observe(viewLifecycleOwner) { chats ->
-            when(chats) {
+            when (chats) {
                 is UiState.Success -> {
                     chatAdapter.setData(chats.data.toMutableList())
                 }
@@ -57,11 +68,14 @@ class ChatFragment : Fragment() {
         }
     }
 
-    private fun initialization() {
-        binding.recycler.setHasFixedSize(true)
-        chatAdapter = ChatAdapter()
-        binding.recycler.layoutManager = LinearLayoutManager(requireContext())
-        binding.recycler.adapter = chatAdapter
-
+    override fun <T, I> onItemClick(item: T, intent: I?) {
+        val chatModel = item as ChatModel
+        val sendData = MainScreenFragmentDirections.actionMainScreenFragmentToMessageFragment(
+            chatModel.docId,
+            chatModel.receiver,
+            chatModel.receiverImage
+        )
+        requireView().findNavController().navigate(sendData)
     }
 }
+
