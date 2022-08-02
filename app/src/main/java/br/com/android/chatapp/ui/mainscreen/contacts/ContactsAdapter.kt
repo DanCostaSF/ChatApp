@@ -19,7 +19,10 @@ class ContactsAdapter(var listener: OnClickItemListener) :
 
     fun setData(list: List<ContactModel>) {
         this.data.clear()
-        this.data.addAll(list)
+        val users = list.reversed().distinctBy {
+            it.profileUid
+        }.reversed()
+        this.data.addAll(users)
         notifyDataSetChanged()
     }
 
@@ -58,7 +61,6 @@ class ContactsAdapter(var listener: OnClickItemListener) :
                 )
             }
 
-
             openChat.setOnClickListener {
                 listener.onItemClick(
                     item, IntentContact.goToMessage(
@@ -68,10 +70,7 @@ class ContactsAdapter(var listener: OnClickItemListener) :
                     )
                 )
             }
-
-
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactsViewHolder {
@@ -87,7 +86,6 @@ class ContactsAdapter(var listener: OnClickItemListener) :
     override fun onBindViewHolder(holder: ContactsViewHolder, position: Int) {
         val item = data[position]
         holder.bind(item, listener)
-
     }
 
     override fun getItemCount(): Int {

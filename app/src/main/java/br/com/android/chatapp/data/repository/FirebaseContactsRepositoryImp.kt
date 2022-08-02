@@ -34,7 +34,6 @@ object FirebaseContactsRepositoryImp : FirebaseContactsRepository {
                     } else {
                         if (!snapshot?.isEmpty!!) {
                             val userList = snapshot.documents
-                            user.clear()
                             for (doc in userList) {
                                 if (auth.currentUser!!.uid != doc.id
                                 ) {
@@ -154,6 +153,7 @@ object FirebaseContactsRepositoryImp : FirebaseContactsRepository {
     ) {
         withContext(Dispatchers.IO) {
             val search = arrayListOf<UserModel>()
+            search.clear()
             if (queryTerm.isEmpty()) {
                 result.invoke(
                     UiState.Loading
@@ -162,7 +162,7 @@ object FirebaseContactsRepositoryImp : FirebaseContactsRepository {
                 fire.collection("users")
                     .orderBy("userName")
                     .startAt(queryTerm)
-                    .limit(5)
+                    .limit(3)
                     .addSnapshotListener { snapshot, exception ->
                         if (exception != null) {
                             result.invoke(
@@ -171,7 +171,6 @@ object FirebaseContactsRepositoryImp : FirebaseContactsRepository {
                         } else {
                             if (!snapshot?.isEmpty!!) {
                                 val searchList = snapshot.documents
-                                search.clear()
                                 for (doc in searchList) {
                                     if (auth.currentUser!!.uid != doc.id) {
                                         val obj = UserModel(
@@ -193,6 +192,4 @@ object FirebaseContactsRepositoryImp : FirebaseContactsRepository {
             }
         }
     }
-
-
 }

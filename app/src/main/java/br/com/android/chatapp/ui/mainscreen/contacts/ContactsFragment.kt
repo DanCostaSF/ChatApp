@@ -147,7 +147,6 @@ class ContactsFragment
     override fun <T, I> onItemClick(item: T, intent: I?) {
         val intentContact = intent as IntentContact
         when(intentContact) {
-
             is IntentContact.goToMessage -> {
                 val sendData = ContactsFragmentDirections.actionContactsFragmentToMessageFragment(
                     intentContact.profileUid,
@@ -158,7 +157,6 @@ class ContactsFragment
             }
             is IntentContact.goToAddFriend -> {
                 contactViewModel.addFriend(intentContact.profileUid)
-
             }
         }
 

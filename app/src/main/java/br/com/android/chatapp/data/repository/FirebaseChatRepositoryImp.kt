@@ -20,13 +20,13 @@ object FirebaseChatRepositoryImp : FirebaseChatRepository {
     override suspend fun findFriends(
         result: (UiState<ArrayList<ChatModel>>) -> Unit,
     ) {
+        chatsInfo.clear()
         withContext(Dispatchers.IO) {
             fire.collection("users")
                 .document(auth.uid.toString())
                 .collection("friends")
                 .get()
                 .addOnSuccessListener {
-                    chatsInfo.clear()
                     if (!it.isEmpty) {
                         val listContact = it.documents
                         for (doc in listContact) {
@@ -42,6 +42,7 @@ object FirebaseChatRepositoryImp : FirebaseChatRepository {
                                                         UiState.Loading
                                                     )
                                                 } else {
+
                                                     val name =
                                                         value!!.getString("userName")
                                                             .toString()
