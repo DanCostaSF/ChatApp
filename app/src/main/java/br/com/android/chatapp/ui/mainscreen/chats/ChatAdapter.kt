@@ -2,14 +2,11 @@ package br.com.android.chatapp.ui.mainscreen.chats
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.AdapterView
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import br.com.android.chatapp.R
 import br.com.android.chatapp.data.models.ChatModel
 import br.com.android.chatapp.databinding.AdapterChatsBinding
 import br.com.android.chatapp.ui.OnClickItemListener
-import br.com.android.chatapp.ui.mainscreen.MainScreenFragmentDirections
 import com.squareup.picasso.Picasso
 
 class ChatAdapter(var listener: OnClickItemListener) :
@@ -25,13 +22,13 @@ class ChatAdapter(var listener: OnClickItemListener) :
 
     class ChatsViewHolder(binding: AdapterChatsBinding) : RecyclerView.ViewHolder(binding.root) {
         val name = binding.textReceiver
-        val message = binding.textMessage
-        val photo = binding.imgProfileImage
-        val content = binding.content
+        val email = binding.textEmail
+        private val photo = binding.imgProfileImage
+        private val content = binding.content
 
         fun bind(item: ChatModel, listener: OnClickItemListener) {
             name.text = item.receiver
-            message.text = item.message
+            email.text = item.email
 
             Picasso.get()
                 .load(item.receiverImage)
@@ -61,9 +58,7 @@ class ChatAdapter(var listener: OnClickItemListener) :
 
     override fun onBindViewHolder(holder: ChatsViewHolder, position: Int) {
         val chat = data[position]
-
         holder.bind(chat, listener)
-
     }
 
     override fun getItemCount(): Int {

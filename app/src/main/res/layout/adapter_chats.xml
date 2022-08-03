@@ -34,12 +34,12 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/textMessage"
+                android:id="@+id/textEmail"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_marginStart="1dp"
                 android:padding="1dp"
-                android:text="@string/mensagem_do_usuario"
+                android:text="@string/email"
                 android:textColor="@color/letra"
                 android:textSize="12sp"
                 android:textStyle="normal" />

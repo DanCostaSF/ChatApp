@@ -33,35 +33,36 @@ object FirebaseChatRepositoryImp : FirebaseChatRepository {
                             if (doc.id != auth.currentUser?.uid) {
                                 val friendsID = doc.id
                                 findChat(friendsID) { room ->
-                                    getLastMessage(room) { lastmessage ->
-                                        fire.collection("users")
-                                            .document(friendsID)
-                                            .addSnapshotListener { value, error ->
-                                                if (error != null) {
-                                                    result.invoke(
-                                                        UiIntent.Loading
-                                                    )
-                                                } else {
-                                                    val name =
-                                                        value!!.getString("userName")
-                                                            .toString()
-                                                    val photo =
-                                                        value.getString("userProfilePhoto")
-                                                            .toString()
-                                                    val obj = ChatModel(
-                                                        name,
-                                                        lastmessage,
-                                                        photo,
-                                                        friendsID,
-                                                        null
-                                                    )
-                                                    chatsInfo.add(obj)
-                                                    result.invoke(
-                                                        UiIntent.Success(chatsInfo)
-                                                    )
-                                                }
+                                    fire.collection("users")
+                                        .document(friendsID)
+                                        .addSnapshotListener { value, error ->
+                                            if (error != null) {
+                                                result.invoke(
+                                                    UiIntent.Loading
+                                                )
+                                            } else {
+                                                val name =
+                                                    value!!.getString("userName")
+                                                        .toString()
+                                                val photo =
+                                                    value.getString("userProfilePhoto")
+                                                        .toString()
+                                                val email =
+                                                    value.getString("userEmail")
+                                                        .toString()
+                                                val obj = ChatModel(
+                                                    name,
+                                                    photo,
+                                                    email,
+                                                    friendsID,
+                                                    null
+                                                )
+                                                chatsInfo.add(obj)
+                                                result.invoke(
+                                                    UiIntent.Success(chatsInfo)
+                                                )
                                             }
-                                    }
+                                        }
                                 }
                             }
                         }
@@ -86,34 +87,4 @@ object FirebaseChatRepositoryImp : FirebaseChatRepository {
             }
     }
 
-    private fun getLastMessage(
-        room: String,
-        message: (String) -> Unit,
-    ) {
-
-        fire.collection("chats")
-            .document(room)
-            .collection("messages")
-            .orderBy("messageTime", Query.Direction.DESCENDING)
-            .addSnapshotListener { msgsnapshot, exception ->
-                if (exception != null) {
-                    Log.d("teste", "deu erro setchat")
-                } else {
-                    if (!msgsnapshot!!.isEmpty) {
-                        val id = msgsnapshot.documents[0].id
-
-                        fire.collection("chats")
-                            .document(room)
-                            .collection("messages")
-                            .document(id)
-                            .get()
-                            .addOnSuccessListener {
-                                val lastmessage = it.getString("message").toString()
-                                message.invoke(lastmessage)
-
-                            }
-                    }
-                }
-            }
-    }
 }

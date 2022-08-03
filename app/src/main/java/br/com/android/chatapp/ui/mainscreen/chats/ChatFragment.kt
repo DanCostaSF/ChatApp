@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import br.com.android.chatapp.data.models.ChatModel
+import br.com.android.chatapp.data.models.ContactModel
 import br.com.android.chatapp.data.util.UiIntent
 import br.com.android.chatapp.databinding.FragmentChatBinding
 import br.com.android.chatapp.ui.OnClickItemListener

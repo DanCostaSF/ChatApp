@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Repositorios/ChatApp/app/src/main/res/layout/adapter_chats.xml" value="0.5" />
         <entry key="app/src/main/res/drawable-v24/ic_back_24.xml" value="0.2085" />
         <entry key="app/src/main/res/drawable-v24/ic_baseline_email_24.xml" value="0.2085" />
         <entry key="app/src/main/res/drawable-v24/ic_baseline_import_contacts_24.xml" value="0.2085" />
