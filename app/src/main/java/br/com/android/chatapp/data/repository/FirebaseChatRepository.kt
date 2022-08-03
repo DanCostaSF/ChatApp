@@ -4,5 +4,5 @@ import br.com.android.chatapp.data.models.ChatModel
 import br.com.android.chatapp.data.util.UiIntent
 
 interface FirebaseChatRepository {
-    suspend fun findFriends(result: (UiIntent<ArrayList<ChatModel>>) -> Unit)
+    suspend fun findChats(result: (UiIntent<ArrayList<ChatModel>>) -> Unit)
 }

@@ -18,7 +18,7 @@ class ChatViewModel(private val repository: FirebaseChatRepository) : ViewModel(
 
     fun findChat() {
         viewModelScope.launch {
-            repository.findFriends {
+            repository.findChats {
                 _chatsList.postValue(it)
             }
         }
