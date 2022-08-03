@@ -33,8 +33,7 @@ class ChatAdapter(var listener: OnClickItemListener) :
             name.text = item.receiver
             message.text = item.message
 
-            Picasso
-                .get()
+            Picasso.get()
                 .load(item.receiverImage)
                 .error(R.drawable.padrao)
                 .into(photo)

@@ -1,4 +1,4 @@
-package com.example.portifliozap.ui.mainscreen
+package br.com.android.chatapp.ui.mainscreen
 
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth

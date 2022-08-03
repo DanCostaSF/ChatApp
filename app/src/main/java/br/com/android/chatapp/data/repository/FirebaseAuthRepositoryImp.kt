@@ -1,7 +1,7 @@
 package br.com.android.chatapp.data.repository
 
 import br.com.android.chatapp.data.models.UserLoginModel
-import br.com.android.chatapp.data.util.UiState
+import br.com.android.chatapp.data.util.UiIntent
 import com.google.firebase.auth.*
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -17,7 +17,7 @@ object FirebaseAuthRepositoryImp : FirebaseAuthRepository {
 
     override suspend fun loginUser(
         user: UserLoginModel,
-        result: (UiState<String>) -> Unit,
+        result: (UiIntent<String>) -> Unit,
     ) {
         withContext(Dispatchers.IO) {
             auth.signInWithEmailAndPassword(
@@ -26,22 +26,22 @@ object FirebaseAuthRepositoryImp : FirebaseAuthRepository {
             ).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     result.invoke(
-                        UiState.Success("Usuário logado com sucesso!")
+                        UiIntent.Success("Usuário logado com sucesso!")
                     )
                 } else {
                     try {
                         throw task.exception!!
                     } catch (e: FirebaseAuthInvalidUserException) {
                         result.invoke(
-                            UiState.Failure("Usuário não está cadastrado.")
+                            UiIntent.Failure("Usuário não está cadastrado.")
                         )
                     } catch (e: FirebaseAuthInvalidCredentialsException) {
                         result.invoke(
-                            UiState.Failure("A senha está incorreta!")
+                            UiIntent.Failure("A senha está incorreta!")
                         )
                     } catch (e: Exception) {
                         result.invoke(
-                            UiState.Failure("Erro ao logar o usuário" + e.message)
+                            UiIntent.Failure("Erro ao logar o usuário" + e.message)
                         )
                         e.printStackTrace()
                     }
@@ -53,7 +53,7 @@ object FirebaseAuthRepositoryImp : FirebaseAuthRepository {
     override suspend fun createAccount(
         email: String,
         password: String,
-        result: (UiState<String>) -> Unit,
+        result: (UiIntent<String>) -> Unit,
     ) {
         withContext(Dispatchers.IO) {
             auth.createUserWithEmailAndPassword(
@@ -74,7 +74,7 @@ object FirebaseAuthRepositoryImp : FirebaseAuthRepository {
                     db.set(obj)
 
                     result.invoke(
-                        UiState.Success("Usuário registrado com sucesso!")
+                        UiIntent.Success("Usuário registrado com sucesso!")
                     )
 
                 } else {
@@ -82,19 +82,19 @@ object FirebaseAuthRepositoryImp : FirebaseAuthRepository {
                         throw task.exception!!
                     } catch (e: FirebaseAuthWeakPasswordException) {
                         result.invoke(
-                            UiState.Failure("Digite uma senha mais forte!")
+                            UiIntent.Failure("Digite uma senha mais forte!")
                         )
                     } catch (e: FirebaseAuthInvalidCredentialsException) {
                         result.invoke(
-                            UiState.Failure("Digite um e-mail válido!")
+                            UiIntent.Failure("Digite um e-mail válido!")
                         )
                     } catch (e: FirebaseAuthUserCollisionException) {
                         result.invoke(
-                            UiState.Failure("Este e-mail já está cadastrado!")
+                            UiIntent.Failure("Este e-mail já está cadastrado!")
                         )
                     } catch (e: java.lang.Exception) {
                         result.invoke(
-                            UiState.Failure("Erro ao cadastrar usuário" + e.message)
+                            UiIntent.Failure("Erro ao cadastrar usuário" + e.message)
                         )
                         e.printStackTrace()
                     }

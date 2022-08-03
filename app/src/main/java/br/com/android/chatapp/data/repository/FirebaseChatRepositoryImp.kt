@@ -2,7 +2,7 @@ package br.com.android.chatapp.data.repository
 
 import android.util.Log
 import br.com.android.chatapp.data.models.ChatModel
-import br.com.android.chatapp.data.util.UiState
+import br.com.android.chatapp.data.util.UiIntent
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -15,11 +15,11 @@ object FirebaseChatRepositoryImp : FirebaseChatRepository {
     private val fire by lazy { FirebaseFirestore.getInstance() }
     private val auth by lazy { FirebaseAuth.getInstance() }
 
-    private var chatsInfo = arrayListOf<ChatModel>()
-
     override suspend fun findFriends(
-        result: (UiState<ArrayList<ChatModel>>) -> Unit,
+        result: (UiIntent<ArrayList<ChatModel>>) -> Unit,
     ) {
+        val chatsInfo = arrayListOf<ChatModel>()
+
         chatsInfo.clear()
         withContext(Dispatchers.IO) {
             fire.collection("users")
@@ -39,28 +39,25 @@ object FirebaseChatRepositoryImp : FirebaseChatRepository {
                                             .addSnapshotListener { value, error ->
                                                 if (error != null) {
                                                     result.invoke(
-                                                        UiState.Loading
+                                                        UiIntent.Loading
                                                     )
                                                 } else {
-
                                                     val name =
                                                         value!!.getString("userName")
                                                             .toString()
                                                     val photo =
                                                         value.getString("userProfilePhoto")
                                                             .toString()
-
-                                                    val obj =
-                                                        ChatModel(
-                                                            name,
-                                                            lastmessage,
-                                                            photo,
-                                                            friendsID,
-                                                            null
-                                                        )
+                                                    val obj = ChatModel(
+                                                        name,
+                                                        lastmessage,
+                                                        photo,
+                                                        friendsID,
+                                                        null
+                                                    )
                                                     chatsInfo.add(obj)
                                                     result.invoke(
-                                                        UiState.Success(chatsInfo)
+                                                        UiIntent.Success(chatsInfo)
                                                     )
                                                 }
                                             }
@@ -113,6 +110,7 @@ object FirebaseChatRepositoryImp : FirebaseChatRepository {
                             .addOnSuccessListener {
                                 val lastmessage = it.getString("message").toString()
                                 message.invoke(lastmessage)
+
                             }
                     }
                 }

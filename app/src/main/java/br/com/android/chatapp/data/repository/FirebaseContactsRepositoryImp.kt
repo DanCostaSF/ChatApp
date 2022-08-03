@@ -1,10 +1,9 @@
 package br.com.android.chatapp.data.repository
 
 import android.util.Log
-import android.view.View
 import br.com.android.chatapp.data.models.ContactModel
 import br.com.android.chatapp.data.models.UserModel
-import br.com.android.chatapp.data.util.UiState
+import br.com.android.chatapp.data.util.UiIntent
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
@@ -17,10 +16,10 @@ import kotlin.collections.ArrayList
 object FirebaseContactsRepositoryImp : FirebaseContactsRepository {
 
     private val fire by lazy { FirebaseFirestore.getInstance() }
-    private val auth by lazy { FirebaseAuth.getInstance()}
+    private val auth by lazy { FirebaseAuth.getInstance() }
 
     override suspend fun getUsersData(
-        result: (UiState<ArrayList<ContactModel>>) -> Unit,
+        result: (UiIntent<ArrayList<ContactModel>>) -> Unit,
     ) {
         withContext(Dispatchers.Main) {
             val user = arrayListOf<ContactModel>()
@@ -29,7 +28,7 @@ object FirebaseContactsRepositoryImp : FirebaseContactsRepository {
                 .addSnapshotListener { snapshot, exception ->
                     if (exception != null) {
                         result.invoke(
-                            UiState.Loading
+                            UiIntent.Loading
                         )
                     } else {
                         if (!snapshot?.isEmpty!!) {
@@ -48,7 +47,7 @@ object FirebaseContactsRepositoryImp : FirebaseContactsRepository {
                                         )
                                         user.add(obj)
                                         result.invoke(
-                                            UiState.Success(user)
+                                            UiIntent.Success(user)
                                         )
                                     }
                                 }
@@ -59,7 +58,7 @@ object FirebaseContactsRepositoryImp : FirebaseContactsRepository {
         }
     }
 
-    private fun isFriend(friendID: String, result: ( Boolean) -> Unit) {
+    private fun isFriend(friendID: String, result: (Boolean) -> Unit) {
         FirebaseFirestore.getInstance()
             .collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
             .collection("friends")
@@ -78,7 +77,7 @@ object FirebaseContactsRepositoryImp : FirebaseContactsRepository {
     }
 
     override suspend fun getFriendsData(
-        result: (UiState<ArrayList<UserModel>>) -> Unit,
+        result: (UiIntent<ArrayList<UserModel>>) -> Unit,
     ) {
         withContext(Dispatchers.Main) {
             val users = arrayListOf<UserModel>()
@@ -101,7 +100,7 @@ object FirebaseContactsRepositoryImp : FirebaseContactsRepository {
                                     .addSnapshotListener { value, error ->
                                         if (error != null) {
                                             result.invoke(
-                                                UiState.Loading
+                                                UiIntent.Loading
                                             )
                                         } else {
 
@@ -114,7 +113,7 @@ object FirebaseContactsRepositoryImp : FirebaseContactsRepository {
                                             )
                                             users.add(obj)
                                             result.invoke(
-                                                UiState.Success(users)
+                                                UiIntent.Success(users)
                                             )
                                         }
                                     }
@@ -149,14 +148,14 @@ object FirebaseContactsRepositoryImp : FirebaseContactsRepository {
 
     override suspend fun searchUsers(
         queryTerm: String,
-        result: (UiState<ArrayList<UserModel>>) -> Unit,
+        result: (UiIntent<ArrayList<ContactModel>>) -> Unit,
     ) {
         withContext(Dispatchers.IO) {
-            val search = arrayListOf<UserModel>()
+            val search = arrayListOf<ContactModel>()
             search.clear()
             if (queryTerm.isEmpty()) {
                 result.invoke(
-                    UiState.Loading
+                    UiIntent.Loading
                 )
             } else {
                 fire.collection("users")
@@ -166,24 +165,27 @@ object FirebaseContactsRepositoryImp : FirebaseContactsRepository {
                     .addSnapshotListener { snapshot, exception ->
                         if (exception != null) {
                             result.invoke(
-                                UiState.Loading
+                                UiIntent.Loading
                             )
                         } else {
                             if (!snapshot?.isEmpty!!) {
                                 val searchList = snapshot.documents
                                 for (doc in searchList) {
                                     if (auth.currentUser!!.uid != doc.id) {
-                                        val obj = UserModel(
-                                            doc.id,
-                                            doc.getString("userName").toString(),
-                                            doc.getString("userEmail").toString(),
-                                            doc.getString("userStatus").toString(),
-                                            doc.getString("userProfilePhoto").toString()
-                                        )
-                                        search.add(obj)
-                                        result.invoke(
-                                            UiState.Success(search)
-                                        )
+                                        isFriend(doc.id) {
+                                            val obj = ContactModel(
+                                                doc.id,
+                                                doc.getString("userName").toString(),
+                                                doc.getString("userEmail").toString(),
+                                                doc.getString("userStatus").toString(),
+                                                doc.getString("userProfilePhoto").toString(),
+                                                it
+                                            )
+                                            search.add(obj)
+                                            result.invoke(
+                                                UiIntent.Success(search)
+                                            )
+                                        }
                                     }
                                 }
                             }

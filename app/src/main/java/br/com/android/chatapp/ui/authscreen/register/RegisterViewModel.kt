@@ -6,15 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.android.chatapp.data.repository.FirebaseAuthRepository
-import br.com.android.chatapp.data.util.UiState
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FirebaseFirestore
+import br.com.android.chatapp.data.util.UiIntent
 import kotlinx.coroutines.launch
-import java.lang.Exception
 
 class RegisterViewModel(private val repository: FirebaseAuthRepository) : ViewModel() {
 
@@ -55,16 +48,16 @@ class RegisterViewModel(private val repository: FirebaseAuthRepository) : ViewMo
         viewModelScope.launch {
             repository.createAccount(email, password) {
                 when(it) {
-                    is UiState.Success -> {
+                    is UiIntent.Success -> {
                         saveExceptRegister(it.data)
                         _progressBar.value = true
                         _navigateToMainScreen.value = true
                     }
-                    is UiState.Failure -> {
+                    is UiIntent.Failure -> {
                         _progressBar.value = false
                         saveExceptRegister(it.error.toString())
                     }
-                    UiState.Loading -> UiState.Loading
+                    UiIntent.Loading -> UiIntent.Loading
                 }
             }
         }

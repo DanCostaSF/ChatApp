@@ -8,7 +8,6 @@ class ViewPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
     private val fragmentList: MutableList<Fragment> = ArrayList()
     private val titleList: MutableList<String> = ArrayList()
 
-
     fun getTitle(position: Int): String {
         return titleList[position]
     }

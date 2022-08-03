@@ -3,7 +3,7 @@ package br.com.android.chatapp.data.repository
 import android.graphics.Bitmap
 import android.util.Log
 import br.com.android.chatapp.data.models.UserModel
-import br.com.android.chatapp.data.util.UiState
+import br.com.android.chatapp.data.util.UiIntent
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -24,7 +24,7 @@ object FirebaseStorageRepositoryImp : FirebaseStorageRepository {
     private lateinit var image: ByteArray
 
 
-    override suspend fun setDataUser(result: (UiState<ArrayList<UserModel>>) -> Unit) {
+    override suspend fun setDataUser(result: (UiIntent<ArrayList<UserModel>>) -> Unit) {
         withContext(Dispatchers.IO) {
             val userId = auth.currentUser!!.uid
             db = fire.collection("users").document(userId)
@@ -32,7 +32,7 @@ object FirebaseStorageRepositoryImp : FirebaseStorageRepository {
                 confInfo.clear()
                 if (error != null) {
                     result.invoke(
-                        UiState.Loading
+                        UiIntent.Loading
                     )
                 } else {
                     val obj = UserModel("",
@@ -44,7 +44,7 @@ object FirebaseStorageRepositoryImp : FirebaseStorageRepository {
 
                     confInfo.add(obj)
                     result.invoke(
-                        UiState.Success(confInfo)
+                        UiIntent.Success(confInfo)
                     )
                 }
             }

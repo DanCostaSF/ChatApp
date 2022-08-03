@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import br.com.android.chatapp.data.models.UserModel
-import br.com.android.chatapp.data.util.UiState
+import br.com.android.chatapp.data.util.UiIntent
 import br.com.android.chatapp.databinding.FragmentFriendsBinding
 import br.com.android.chatapp.ui.OnClickItemListener
 import br.com.android.chatapp.ui.mainscreen.MainScreenFragmentDirections
@@ -59,11 +59,11 @@ class FriendsFragment : Fragment(), OnClickItemListener {
     private fun setObservers() {
         friendsViewModel.friends.observe(viewLifecycleOwner) { friends ->
             when(friends) {
-                is UiState.Success -> {
+                is UiIntent.Success -> {
                     friendsAdapter.setData(friends.data.toMutableList())
                 }
-                is UiState.Failure -> UiState.Loading
-                UiState.Loading -> UiState.Loading
+                is UiIntent.Failure -> UiIntent.Loading
+                UiIntent.Loading -> UiIntent.Loading
             }
         }
     }

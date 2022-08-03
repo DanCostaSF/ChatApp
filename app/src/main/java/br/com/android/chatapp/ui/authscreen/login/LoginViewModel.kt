@@ -6,10 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.android.chatapp.data.models.UserLoginModel
 import br.com.android.chatapp.data.repository.FirebaseAuthRepository
-import br.com.android.chatapp.data.util.UiState
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import br.com.android.chatapp.data.util.UiIntent
 import kotlinx.coroutines.launch
 
 class LoginViewModel(private val repository: FirebaseAuthRepository) : ViewModel() {
@@ -39,14 +36,14 @@ class LoginViewModel(private val repository: FirebaseAuthRepository) : ViewModel
         viewModelScope.launch {
             repository.loginUser(userLogin) {
                 when(it) {
-                    is UiState.Success -> {
+                    is UiIntent.Success -> {
                         saveExceptLogin(it.data)
                         _navigateToMainScreen.value = true
                     }
-                    is UiState.Failure -> {
+                    is UiIntent.Failure -> {
                         saveExceptLogin(it.error.toString())
                     }
-                    UiState.Loading -> UiState.Loading
+                    UiIntent.Loading -> UiIntent.Loading
                 }
             }
         }

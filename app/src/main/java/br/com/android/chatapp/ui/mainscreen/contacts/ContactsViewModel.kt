@@ -7,17 +7,17 @@ import androidx.lifecycle.viewModelScope
 import br.com.android.chatapp.data.models.ContactModel
 import br.com.android.chatapp.data.models.UserModel
 import br.com.android.chatapp.data.repository.FirebaseContactsRepository
-import br.com.android.chatapp.data.util.UiState
+import br.com.android.chatapp.data.util.UiIntent
 import kotlinx.coroutines.launch
 
 class ContactsViewModel(private val repository: FirebaseContactsRepository) : ViewModel() {
 
-    private val _searchInfo = MutableLiveData<UiState<List<UserModel>>>()
-    val searchInfo: LiveData<UiState<List<UserModel>>>
+    private val _searchInfo = MutableLiveData<UiIntent<List<ContactModel>>>()
+    val searchInfo: LiveData<UiIntent<List<ContactModel>>>
         get() = _searchInfo
 
-    private val _users = MutableLiveData<UiState<List<ContactModel>>>()
-    val users: LiveData<UiState<List<ContactModel>>>
+    private val _users = MutableLiveData<UiIntent<List<ContactModel>>>()
+    val users: LiveData<UiIntent<List<ContactModel>>>
         get() = _users
 
     fun getUsers() {

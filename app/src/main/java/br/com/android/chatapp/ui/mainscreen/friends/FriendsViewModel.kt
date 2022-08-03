@@ -6,13 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.android.chatapp.data.models.UserModel
 import br.com.android.chatapp.data.repository.FirebaseContactsRepository
-import br.com.android.chatapp.data.util.UiState
+import br.com.android.chatapp.data.util.UiIntent
 import kotlinx.coroutines.launch
 
 class FriendsViewModel(private val repository: FirebaseContactsRepository) : ViewModel(){
 
-    private val _friends = MutableLiveData<UiState<List<UserModel>>>()
-    val friends: LiveData<UiState<List<UserModel>>>
+    private val _friends = MutableLiveData<UiIntent<List<UserModel>>>()
+    val friends: LiveData<UiIntent<List<UserModel>>>
         get() = _friends
 
       fun getFriends() {

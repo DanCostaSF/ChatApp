@@ -1,10 +1,12 @@
 package br.com.android.chatapp.data.repository
 
+import android.util.Log
 import br.com.android.chatapp.data.models.MessageModel
-import br.com.android.chatapp.data.util.UiState
+import br.com.android.chatapp.data.util.UiIntent
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -33,17 +35,17 @@ object FirebaseMessageRepositoryImp : FirebaseMessageRepository {
                 } else {
 
                     val roomId = value.documents[0].id
-                    val currentTimestamp = System.currentTimeMillis().toString()
-                    val c = Calendar.getInstance(Locale.getDefault())
-                    val hour = c.get(Calendar.HOUR_OF_DAY)
-                    val minute = c.get(Calendar.MINUTE)
-                    val timeNow = "$hour:$minute"
+                    val currentTimestamp = System.currentTimeMillis()
+                    val simpleDateFormat = SimpleDateFormat("hh:mm")
+                    val date = Date(currentTimestamp)
+                    val timeNow = simpleDateFormat.format(date)
+
                     val messageObject = mutableMapOf<String, Any>().also {
                         it["message"] = message
                         it["messageSender"] = auth.currentUser?.uid.toString()
                         it["messageReceiver"] = friendId
-                        it["messageTime"] = currentTimestamp
-                        it["timeNow"] = timeNow
+                        it["messageTime"] = currentTimestamp.toString()
+                        it["timeNow"] = timeNow.toString()
                     }
 
                     fire.collection("chats")
@@ -58,7 +60,7 @@ object FirebaseMessageRepositoryImp : FirebaseMessageRepository {
 
     override suspend fun fetchingMessages(
         friendId: String,
-        result: (UiState<ArrayList<MessageModel>>) -> Unit,
+        result: (UiIntent<ArrayList<MessageModel>>) -> Unit,
     ) {
 
         val senderUid = auth.currentUser?.uid.toString()
@@ -69,7 +71,7 @@ object FirebaseMessageRepositoryImp : FirebaseMessageRepository {
             .addSnapshotListener { value, _ ->
                 if (value!!.isEmpty) {
                     result.invoke(
-                        UiState.Loading
+                        UiIntent.Loading
                     )
                 } else {
 
@@ -83,7 +85,7 @@ object FirebaseMessageRepositoryImp : FirebaseMessageRepository {
 
                             if (exception != null) {
                                 result.invoke(
-                                    UiState.Loading
+                                    UiIntent.Loading
                                 )
                             } else {
 
@@ -101,7 +103,7 @@ object FirebaseMessageRepositoryImp : FirebaseMessageRepository {
                                         )
                                         messageInfo.add(chatobj)
                                         result.invoke(
-                                            UiState.Success(messageInfo)
+                                            UiIntent.Success(messageInfo)
                                         )
                                     }
                                 }

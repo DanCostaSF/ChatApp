@@ -6,13 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.android.chatapp.data.models.MessageModel
 import br.com.android.chatapp.data.repository.FirebaseMessageRepository
-import br.com.android.chatapp.data.util.UiState
+import br.com.android.chatapp.data.util.UiIntent
 import kotlinx.coroutines.launch
 
 class MessageViewModel(private val repository: FirebaseMessageRepository) : ViewModel() {
 
-    private val _messages = MutableLiveData<UiState<List<MessageModel>>>()
-    val messagesList: MutableLiveData<UiState<List<MessageModel>>>
+    private val _messages = MutableLiveData<UiIntent<List<MessageModel>>>()
+    val messagesList: MutableLiveData<UiIntent<List<MessageModel>>>
         get() = _messages
 
     private val _errorEdtSend = MutableLiveData<Boolean?>()

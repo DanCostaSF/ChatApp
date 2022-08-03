@@ -9,8 +9,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.android.chatapp.R
-import br.com.android.chatapp.data.models.UserModel
-import br.com.android.chatapp.data.util.UiState
+import br.com.android.chatapp.data.util.UiIntent
 import br.com.android.chatapp.databinding.FragmentContactsBinding
 import br.com.android.chatapp.ui.OnClickItemListener
 import br.com.android.chatapp.ui.util.navBack
@@ -30,11 +29,7 @@ class ContactsFragment
     private lateinit var searchRecyclerView: RecyclerView
     private lateinit var searchLayoutManager: RecyclerView.LayoutManager
     private lateinit var searchAdapter: SearchAdapter
-
     private lateinit var contactsAdapter: ContactsAdapter
-
-    private val searchInfo = arrayListOf<UserModel>()
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,14 +38,11 @@ class ContactsFragment
     ): View {
         _binding = FragmentContactsBinding.inflate(inflater, container, false)
         val viewModelFactory = ContactsViewModelFactory()
-
         _contactViewModel = ViewModelProvider(
-            this, viewModelFactory
-        )[ContactsViewModel::class.java]
+            this, viewModelFactory)[ContactsViewModel::class.java]
 
         initialization()
         contactViewModel.getUsers()
-
         return binding.root
     }
 
@@ -58,13 +50,11 @@ class ContactsFragment
         searchRecyclerView = binding.recyclerViewSearch
         searchLayoutManager = LinearLayoutManager(requireContext())
         searchRecyclerView.layoutManager = searchLayoutManager
-        searchAdapter = SearchAdapter()
+        searchAdapter = SearchAdapter(this)
         searchRecyclerView.adapter = searchAdapter
         binding.recycler.layoutManager = LinearLayoutManager(requireContext())
         contactsAdapter = ContactsAdapter(this)
         binding.recycler.adapter = contactsAdapter
-
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,26 +73,24 @@ class ContactsFragment
         }
     }
 
-
-
     private fun setObservers() {
         contactViewModel.users.observe(viewLifecycleOwner) { chat ->
             when(chat) {
-                is UiState.Success -> {
+                is UiIntent.Success -> {
                     contactsAdapter.setData(chat.data.toMutableList())
                 }
-                is UiState.Failure -> UiState.Loading
-                UiState.Loading -> UiState.Loading
+                is UiIntent.Failure -> UiIntent.Loading
+                UiIntent.Loading -> UiIntent.Loading
             }
         }
 
         contactViewModel.searchInfo.observe(viewLifecycleOwner) { search ->
             when(search) {
-                is UiState.Success -> {
+                is UiIntent.Success -> {
                     searchAdapter.setData(search.data.toMutableList())
                 }
-                is UiState.Failure -> UiState.Loading
-                UiState.Loading -> UiState.Loading
+                is UiIntent.Failure -> UiIntent.Loading
+                UiIntent.Loading -> UiIntent.Loading
             }
         }
     }
@@ -120,7 +108,6 @@ class ContactsFragment
     override fun onQueryTextSubmit(p0: String?): Boolean {
         if (p0 != null) {
             if (p0.isNotEmpty()) {
-                searchInfo.clear()
                 contactViewModel.searchUsers(p0)
                 binding.recyclerViewSearch.visibility = View.VISIBLE
 
@@ -134,7 +121,6 @@ class ContactsFragment
     override fun onQueryTextChange(p0: String?): Boolean {
         if (p0 != null) {
             if (p0.isNotEmpty()) {
-                searchInfo.clear()
                 contactViewModel.searchUsers(p0)
                 binding.recyclerViewSearch.visibility = View.VISIBLE
             } else {
@@ -159,6 +145,5 @@ class ContactsFragment
                 contactViewModel.addFriend(intentContact.profileUid)
             }
         }
-
     }
 }

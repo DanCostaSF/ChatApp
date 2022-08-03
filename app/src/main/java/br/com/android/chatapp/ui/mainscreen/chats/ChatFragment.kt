@@ -1,17 +1,15 @@
 package br.com.android.chatapp.ui.mainscreen.chats
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import br.com.android.chatapp.data.models.ChatModel
-import br.com.android.chatapp.data.util.UiState
+import br.com.android.chatapp.data.util.UiIntent
 import br.com.android.chatapp.databinding.FragmentChatBinding
 import br.com.android.chatapp.ui.OnClickItemListener
 import br.com.android.chatapp.ui.mainscreen.MainScreenFragmentDirections
@@ -26,7 +24,6 @@ class ChatFragment : Fragment(), OnClickItemListener {
 
     private lateinit var chatAdapter: ChatAdapter
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -59,11 +56,11 @@ class ChatFragment : Fragment(), OnClickItemListener {
     private fun setObservers() {
         chatScreenViewModel.chatsList.observe(viewLifecycleOwner) { chats ->
             when (chats) {
-                is UiState.Success -> {
+                is UiIntent.Success -> {
                     chatAdapter.setData(chats.data.toMutableList())
                 }
-                is UiState.Failure -> UiState.Loading
-                UiState.Loading -> UiState.Loading
+                is UiIntent.Failure -> UiIntent.Loading
+                UiIntent.Loading -> UiIntent.Loading
             }
         }
     }

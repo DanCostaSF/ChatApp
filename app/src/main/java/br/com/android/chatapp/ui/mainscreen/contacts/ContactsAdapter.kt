@@ -28,7 +28,6 @@ class ContactsAdapter(var listener: OnClickItemListener) :
 
     class ContactsViewHolder(binding: RecyclerviewContactsBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
         val name = binding.textViewNameRec
         val email = binding.textViewEmailRec
         val status = binding.textViewStatusRec

@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import br.com.android.chatapp.R
-import br.com.android.chatapp.data.util.UiState
+import br.com.android.chatapp.data.util.UiIntent
 import br.com.android.chatapp.databinding.FragmentMessageBinding
 import br.com.android.chatapp.ui.util.navBack
 import com.squareup.picasso.Picasso
@@ -36,13 +36,11 @@ class MessageFragment : Fragment() {
         val viewModelFactory = MessageViewModelFactory()
 
         _messageViewModel = ViewModelProvider(
-            this, viewModelFactory
-        )[MessageViewModel::class.java]
+            this, viewModelFactory)[MessageViewModel::class.java]
 
         initialization()
         messageViewModel.fetchMessage(args.friendUID)
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,7 +58,6 @@ class MessageFragment : Fragment() {
 
             binding.edtSend.text!!.clear()
         }
-
     }
 
     private fun initialization() {
@@ -83,16 +80,14 @@ class MessageFragment : Fragment() {
         }
 
         messageViewModel.messagesList.observe(viewLifecycleOwner) { messages ->
-
             when(messages) {
-                is UiState.Success -> {
+                is UiIntent.Success -> {
                     messageAdapter.setData(messages.data.toMutableList())
                     binding.recycler.scrollToPosition(messages.data.size - 1)
                 }
-                is UiState.Failure -> UiState.Loading
-                UiState.Loading -> UiState.Loading
+                is UiIntent.Failure -> UiIntent.Loading
+                UiIntent.Loading -> UiIntent.Loading
             }
-
         }
     }
 }

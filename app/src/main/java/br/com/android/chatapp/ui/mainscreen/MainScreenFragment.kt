@@ -12,8 +12,6 @@ import br.com.android.chatapp.ui.mainscreen.friends.FriendsFragment
 import br.com.android.chatapp.ui.util.navTo
 import br.com.android.chatapp.ui.util.toast
 import br.com.android.chatapp.ui.viewpager.ViewPagerAdapter
-import com.example.portifliozap.ui.mainscreen.MainScreenViewModel
-import com.example.portifliozap.ui.mainscreen.MainScreenViewModelFactory
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
@@ -48,8 +46,6 @@ class MainScreenFragment : Fragment() {
                MainScreenFragmentDirections.actionMainScreenFragmentToContactsFragment()
            )
        }
-
-
         return binding.root
     }
 

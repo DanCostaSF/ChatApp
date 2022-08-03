@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.android.chatapp.data.models.UserModel
 import br.com.android.chatapp.data.repository.FirebaseStorageRepository
-import br.com.android.chatapp.data.util.UiState
+import br.com.android.chatapp.data.util.UiIntent
 
 import kotlinx.coroutines.launch
 
@@ -20,11 +20,11 @@ class SettingsViewModel(private val repository: FirebaseStorageRepository) : Vie
         viewModelScope.launch {
             repository.setDataUser {
                 when (it) {
-                    is UiState.Success -> {
+                    is UiIntent.Success -> {
                         _userConf.postValue(it.data)
                     }
-                    is UiState.Failure -> UiState.Loading
-                    UiState.Loading -> UiState.Loading
+                    is UiIntent.Failure -> UiIntent.Loading
+                    UiIntent.Loading -> UiIntent.Loading
                 }
             }
         }
