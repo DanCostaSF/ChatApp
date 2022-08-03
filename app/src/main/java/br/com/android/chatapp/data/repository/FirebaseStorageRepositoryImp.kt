@@ -23,7 +23,6 @@ object FirebaseStorageRepositoryImp : FirebaseStorageRepository {
     private lateinit var storageReference: StorageReference
     private lateinit var image: ByteArray
 
-
     override suspend fun setDataUser(result: (UiIntent<ArrayList<UserModel>>) -> Unit) {
         withContext(Dispatchers.IO) {
             val userId = auth.currentUser!!.uid
@@ -41,7 +40,6 @@ object FirebaseStorageRepositoryImp : FirebaseStorageRepository {
                         value?.getString("userStatus").toString(),
                         value?.getString("userProfilePhoto").toString()
                     )
-
                     confInfo.add(obj)
                     result.invoke(
                         UiIntent.Success(confInfo)
@@ -70,7 +68,6 @@ object FirebaseStorageRepositoryImp : FirebaseStorageRepository {
             }
         }
     }
-
 
     override suspend fun buttonSave(name: String, email: String, status: String) {
         withContext(Dispatchers.Default) {

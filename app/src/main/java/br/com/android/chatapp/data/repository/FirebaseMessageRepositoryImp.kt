@@ -1,6 +1,5 @@
 package br.com.android.chatapp.data.repository
 
-import android.util.Log
 import br.com.android.chatapp.data.models.MessageModel
 import br.com.android.chatapp.data.util.UiIntent
 import com.google.firebase.auth.FirebaseAuth

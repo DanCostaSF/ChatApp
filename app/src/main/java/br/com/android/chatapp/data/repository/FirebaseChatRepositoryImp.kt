@@ -9,7 +9,6 @@ import kotlinx.coroutines.withContext
 
 object FirebaseChatRepositoryImp : FirebaseChatRepository {
 
-
     private val fire by lazy { FirebaseFirestore.getInstance() }
     private val auth by lazy { FirebaseAuth.getInstance() }
 
@@ -63,5 +62,4 @@ object FirebaseChatRepositoryImp : FirebaseChatRepository {
                 }
         }
     }
-
 }
